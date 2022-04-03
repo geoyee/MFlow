@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Tuple, List, Any
+from typing import Tuple, Any
 from .graph import DefaultGraph
 
 
@@ -19,7 +19,7 @@ class Node(object):
 
     @property
     def dim(self) -> int:
-        return self.value[0] * self.value[1]
+        return self.value.shape[0] * self.value.shape[1]
 
     @property
     def shape(self) -> Tuple:
@@ -33,10 +33,11 @@ class Node(object):
         if self.graph.name_scope:
             self.name = "{}/{}".format(self.graph.name_scope, self.name)
 
-    def forward(self) -> None:
+    def forward(self) -> np.matrix:
         for parent in self.nparents:
             parent.forward()
         self.calcValue()
+        return self.value
 
     def calcValue(self) -> None:
         NotImplementedError()
@@ -47,17 +48,17 @@ class Node(object):
             for child in self.nchildrens:
                 child.resetValue()
 
-    def backward(self, result: Any) -> None:
+    def backward(self, result: Any) -> np.matrix:
         if self.jacobi is None and self is result:
             self.jacobi = np.mat(np.eye(self.dim))
         else:
-            self.jacobi = np.mat(np.zeros(result.dim, self.dim))
+            self.jacobi = np.mat(np.zeros((result.dim, self.dim)))
             for child in self.nchildrens:
-                if child.valus is not None:
+                if child.value is not None:
                     self.jacobi += child.backward(result) * child.calcJacobi(self)
         return self.jacobi
 
-    def calcJacobi(self, parent: Any) -> None:
+    def calcJacobi(self, parent: Any) -> np.matrix:
         NotImplementedError()
 
     def clearJacobi(self) -> None:
@@ -83,8 +84,5 @@ class Variable(Node):
             return True
         return False
 
-
-# 算子类
-class Operator(Node):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(Operator, self).__init__(*parents, **kwargs)
+    def step(self, lr: float) -> None:
+        self.setValue(self.value - lr * self.jacobi.T.reshape(self.shape))
