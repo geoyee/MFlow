@@ -1,6 +1,7 @@
 from typing import Any
 
 
+# 计算图类
 class Graph(object):
     def __init__(self) -> None:
         self.nodes = []
@@ -22,4 +23,5 @@ class Graph(object):
         return len(self.nodes)
 
 
+# 默认全局计算图
 DefaultGraph = Graph()

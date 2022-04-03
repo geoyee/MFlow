@@ -1,8 +1,9 @@
 import numpy as np
-from typing import Tuple, Any
+from typing import Tuple, List, Any
 from .graph import DefaultGraph
 
 
+# 节点类
 class Node(object):
     def __init__(self, *parents: Any, **kwargs: Any) -> None:
         self.graph = kwargs.get("graph", DefaultGraph)
@@ -10,10 +11,10 @@ class Node(object):
         self._setName(**kwargs)
         self.value = None
         self.jacobi = None
-        self.childrens = []
-        self.parents = parents
-        for parent in self.parents:
-            parent.childrens.append(self)
+        self.nchildrens = []
+        self.nparents = list(parents)
+        for parent in self.nparents:
+            parent.nchildrens.append(self)
         self.graph.addNode(self)
 
     @property
@@ -33,7 +34,7 @@ class Node(object):
             self.name = "{}/{}".format(self.graph.name_scope, self.name)
 
     def forward(self) -> None:
-        for parent in self.parents:
+        for parent in self.nparents:
             parent.forward()
         self.calcValue()
 
@@ -43,7 +44,7 @@ class Node(object):
     def resetValue(self, recursive: bool=True) -> None:
         self.value = None
         if recursive:
-            for child in self.childrens:
+            for child in self.nchildrens:
                 child.resetValue()
 
     def backward(self, result: Any) -> None:
@@ -51,7 +52,7 @@ class Node(object):
             self.jacobi = np.mat(np.eye(self.dim))
         else:
             self.jacobi = np.mat(np.zeros(result.dim, self.dim))
-            for child in self.childrens:
+            for child in self.nchildrens:
                 if child.valus is not None:
                     self.jacobi += child.backward(result) * child.calcJacobi(self)
         return self.jacobi
@@ -63,19 +64,27 @@ class Node(object):
         self.jacobi = None
 
 
+# 参数类
 class Variable(Node):
-    def __init__(self, dim: Tuple[int], trainable: bool=True, **kwargs: Any) -> None:
-        super(Variable, self).__init__(self, **kwargs)
-        self.dim = dim
+    def __init__(self, size: Tuple, trainable: bool=True, **kwargs: Any) -> None:
+        super(Variable, self).__init__(**kwargs)  # 变量没有父节点
+        self.size = size
         self.trainable = trainable
-        self.initValue()
+        if trainable:
+            self.initValue()
 
     def initValue(self) -> None:
-        self.value = np.mat(np.random.normal(0, 0.001, self.dim))
+        self.value = np.mat(np.random.normal(0, 0.001, self.size))
 
     def setValue(self, value: np.matrix) -> bool:
-        if isinstance(value, np.matrix) and value.shape == self.dim:
+        if isinstance(value, np.matrix) and value.shape == self.size:
             self.resetValue()
             self.value = value
             return True
         return False
+
+
+# 算子类
+class Operator(Node):
+    def __init__(self, *parents: Any, **kwargs: Any) -> None:
+        super(Operator, self).__init__(*parents, **kwargs)
