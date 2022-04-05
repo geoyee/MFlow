@@ -61,5 +61,4 @@ class Step(Operator):
         self.value = np.mat(np.where(self.nparents[0].value >= 0.0, 1.0, 0.0))
 
     def calcJacobi(self, parent: Any) -> np.matrix:
-        # np.mat(np.eye(self.dim))  # FIXME:
-        return np.zeros(np.where(self.nparents[0].value >= 0.0, 0.0, -1.0))
+        return np.zeros_like(self.nparents[0].value.A1)
