@@ -32,7 +32,7 @@ class Add(Operator):
         super(Add, self).__init__(*parents, **kwargs)
 
     def calcValue(self) -> None:
-        self.value = np.mat(np.zeros_like(self.nparents[0]))
+        self.value = np.mat(np.zeros(self.nparents[0].shape))
         for parent in self.nparents:
             self.value += parent.value
         self.value = self.value.astype("float32")
@@ -96,9 +96,25 @@ class Logistic(Operator):
 
     def calcValue(self) -> None:
         x = self.nparents[0].value
-        # 数值戒断，防止溢出
+        # 数值截断，防止溢出
         self.value = np.mat(
             1 / (1 + np.power(np.e, np.where(-x > 1e2, 1e2, -x)))).astype("float32")
 
     def calcJacobi(self, parent: Any) -> np.matrix:
         return np.diag(np.mat(np.multiply(self.value, 1 - self.value)).A1).astype("float32")
+
+
+class SoftMax(Operator):
+    def __init__(self, *parents: Any, **kwargs: Any) -> None:
+        super(SoftMax, self).__init__(*parents, **kwargs)
+
+    @staticmethod
+    def softmax(x: np.matrix) -> np.matrix:
+        x[x > 1e2] = 1e2  # 数值截断，防止溢出
+        ep = np.power(np.e, x)
+        return ep / sum(ep)
+
+    def calcValue(self) -> None:
+        self.value = SoftMax.softmax(self.nparents[0].value)
+
+    # 不实现SoftMax的calcJocabi方法，训练时使用CrossEntropyWithSoftMax
