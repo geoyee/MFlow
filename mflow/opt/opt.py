@@ -177,7 +177,6 @@ class Adam(Optimizer):
                                         (1 - self.beta_1) * grad
                 self.hist_s[var_node] = self.beta_2 * self.hist_s[var_node] + \
                                         (1 - self.beta_2) * np.power(grad, 2)
-
             var_node.setValue(
                 var_node.value - self.lr * self.hist_v[var_node] / 
                 (np.sqrt(self.hist_s[var_node] + self.eps)))
