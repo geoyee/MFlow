@@ -33,9 +33,8 @@ class SoftMax(Operator):
 
     @staticmethod
     def softmax(x: np.matrix) -> np.matrix:
-        x[x > 1e2] = 1e2  # 数值截断，防止溢出
-        ep = np.power(np.e, x)
-        return ep / sum(ep)
+        ep = _ePower(x)
+        return np.mat(ep / sum(ep))
 
     def calcValue(self) -> None:
         self.value = SoftMax.softmax(self.nparents[0].value).astype("float32")
@@ -49,6 +48,7 @@ class Tanh(Operator):
         
     def calcValue(self) -> None:
         x = self.nparents[0].value
+        # FIXME: 还是可能溢出，不知为何
         self.value = np.mat(
             (_ePower(x) - _ePower(-x)) / (_ePower(x) + _ePower(-x))).astype("float32")
 

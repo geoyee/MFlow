@@ -4,9 +4,9 @@ from ..core import Node
 
 
 # 求e的x次方
-def _ePower(x):
+def _ePower(x, trunc=1e2):
     # 数值截断，防止溢出
-    return np.power(np.e, np.where(x > 1e2, 1e2, x)).astype("float32")
+    return np.power(np.e, np.where(x > trunc, trunc, x)).astype("float32")
 
 
 # 算子类
