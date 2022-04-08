@@ -1,6 +1,6 @@
 import numpy as np
 from typing import Any
-from ..core import Node
+from .base import Operator
 
 
 """ 注意
@@ -8,12 +8,6 @@ from ..core import Node
 请将数据的类型使用`astype("float32")`进行转换
 可以避免numpy的一些错误
 """
-
-
-# 算子类
-class Operator(Node):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(Operator, self).__init__(*parents, **kwargs)
 
 
 # 将filler矩阵填充在to_be_filled的对角线上
@@ -76,45 +70,3 @@ class Multiply(Operator):
             return np.diag(self.nparents[1].value.A1).astype("float32")
         else:
             return np.diag(self.nparents[0].value.A1).astype("float32")
-
-
-class Step(Operator):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(Step, self).__init__(*parents, **kwargs)
-
-    def calcValue(self) -> None:
-        self.value = np.mat(
-            np.where(self.nparents[0].value >= 0.0, 1.0, 0.0)).astype("float32")
-
-    def calcJacobi(self, parent: Any) -> np.matrix:
-        return np.mat(np.zeros(self.dim)).astype("float32")
-
-
-class Logistic(Operator):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(Logistic, self).__init__(*parents, **kwargs)
-
-    def calcValue(self) -> None:
-        x = self.nparents[0].value
-        # 数值截断，防止溢出
-        self.value = np.mat(
-            1 / (1 + np.power(np.e, np.where(-x > 1e2, 1e2, -x)))).astype("float32")
-
-    def calcJacobi(self, parent: Any) -> np.matrix:
-        return np.diag(np.mat(np.multiply(self.value, 1 - self.value)).A1).astype("float32")
-
-
-class SoftMax(Operator):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(SoftMax, self).__init__(*parents, **kwargs)
-
-    @staticmethod
-    def softmax(x: np.matrix) -> np.matrix:
-        x[x > 1e2] = 1e2  # 数值截断，防止溢出
-        ep = np.power(np.e, x)
-        return ep / sum(ep)
-
-    def calcValue(self) -> None:
-        self.value = SoftMax.softmax(self.nparents[0].value)
-
-    # 不实现SoftMax的calcJocabi方法，训练时使用CrossEntropyWithSoftMax

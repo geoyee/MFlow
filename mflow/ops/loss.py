@@ -1,7 +1,7 @@
 import numpy as np
 from typing import Any
-from ..core import Node
-from .ops import SoftMax
+from .base import  Operator, _ePower
+from .act import SoftMax
 
 
 """ 注意
@@ -12,7 +12,7 @@ from .ops import SoftMax
 
 
 # 损失函数类
-class Loss(Node):
+class Loss(Operator):
     def __init__(self, *parents: Any, **kwargs: Any) -> None:
         super(Loss, self).__init__(*parents, **kwargs)
         self.eps = 1e-12
@@ -41,11 +41,11 @@ class LogLoss(Loss):
         assert len(self.nparents) == 1
         x = self.nparents[0].value
         # 数值截断，防止溢出
-        self.value = np.log(1 + np.power(np.e, np.where(-x > 1e2, 1e2, -x))).astype("float32")
+        self.value = np.log(1 + _ePower(-x)).astype("float32")
 
     def calcJacobi(self, parent: Any) -> np.matrix:
         x = parent.value
-        diag = -1.0 / (1.0 + np.power(np.e, np.where(x > 1e2, 1e2, x)))
+        diag = -1.0 / (1.0 + _ePower(x))
         return np.diag(diag.ravel()).astype("float32")
 
 

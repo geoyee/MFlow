@@ -1,2 +1,3 @@
-from .ops import *
+from .op import *
 from .loss import *
+from .act import *
