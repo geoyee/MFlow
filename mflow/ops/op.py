@@ -29,10 +29,9 @@ class Add(Operator):
         self.value = np.mat(np.zeros(self.nparents[0].shape))
         for parent in self.nparents:
             self.value += parent.value
-        self.value = self.value.astype("float32")
 
     def calcJacobi(self, parent: Any) -> np.matrix:
-        return np.mat(np.eye(self.dim)).astype("float32")
+        return np.mat(np.eye(self.dim))
 
 
 # 矩阵乘法
@@ -70,3 +69,38 @@ class Multiply(Operator):
             return np.diag(self.nparents[1].value.A1).astype("float32")
         else:
             return np.diag(self.nparents[0].value.A1).astype("float32")
+
+
+class Reshape(Operator):
+    def __init__(self, *parents: Any, **kwargs: Any) -> None:
+        super(Reshape, self).__init__(*parents, **kwargs)
+        self.new_shape = kwargs.get("shape")
+        assert isinstance(self.new_shape, tuple) and len(self.new_shape) == 2
+
+    def calcValue(self) -> None:
+        self.value = self.nparents[0].value.reshape(self.new_shape)
+
+    def calcJacobi(self, parent: Any) -> np.matrix:
+        assert parent is self.nparents[0]
+        return np.mat(np.eye(self.dim))
+
+
+class Concat(Operator):
+    def __init__(self, *parents: Any, **kwargs: Any) -> None:
+        super(Concat, self).__init__(*parents, **kwargs)
+        self.axis = kwargs.get("axis", 1)
+
+    def calcValue(self) -> None:
+        self.value = np.concatenate(
+            [p.value.flatten() for p in self.nparents],
+            axis=self.axis).T
+
+    def calcJacobi(self, parent: Any) -> np.matrix:
+        assert parent in self.nparents
+        dims = [p.dim for p in self.nparents]
+        index = self.nparents.index(parent)
+        assert parent.dim == dims[index]
+        jacobi = np.mat(np.zeros(self.dim, parent.dim))
+        start_row = int(np.sum(dims[:index]))
+        jacobi[start_row: start_row + parent.dim, 0: parent.dim] = np.eye(parent.dim)
+        return jacobi.astype("float32")

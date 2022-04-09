@@ -21,7 +21,7 @@ class Logistic(Operator):
 
     def calcValue(self) -> None:
         x = self.nparents[0].value
-        self.value = np.mat(1 / (1 + _ePower(-x))).astype("float32")
+        self.value = np.mat(1.0 / (1.0 + _ePower(-x))).astype("float32")
 
     def calcJacobi(self, parent: Any) -> np.matrix:
         return np.diag(np.mat(np.multiply(self.value, 1 - self.value)).A1).astype("float32")
