@@ -4,9 +4,11 @@ from .node import Variable, Node
 from .graph import DefaultGraph, Graph
 
 
-def getNodeByName(node_name: str, 
-                  name_scope: Union[None, str]=None, 
-                  graph: Union[None, Graph]=None) -> Union[None, Node]:
+def getNodeByName(
+    node_name: str,
+    name_scope: Union[None, str] = None,
+    graph: Union[None, Graph] = None,
+) -> Union[None, Node]:
     graph = DefaultGraph if graph is None else graph
     node_name = (name_scope + "/" + node_name) if name_scope else node_name
     for node in graph.nodes:
@@ -15,15 +17,19 @@ def getNodeByName(node_name: str,
     return None
 
 
-def getTrainabledNode(graph: Union[None, Graph]=None) -> List:
+def getTrainabledNode(graph: Union[None, Graph] = None) -> List:
     graph = DefaultGraph if graph is None else graph
-    return [node for node in graph.nodes if isinstance(node, Variable) and node.trainable]
+    return [
+        node for node in graph.nodes if isinstance(node, Variable) and node.trainable
+    ]
 
 
-def updateNodeValue(node_name: str, 
-                    value: np.matrix, 
-                    name_scope: Union[None, str]=None, 
-                    graph: Union[None, Graph]=None) -> None:
+def updateNodeValue(
+    node_name: str,
+    value: np.matrix,
+    name_scope: Union[None, str] = None,
+    graph: Union[None, Graph] = None,
+) -> None:
     node = getNodeByName(node_name, name_scope, graph)
     if node is not None and node.value != value:
         node.value = value

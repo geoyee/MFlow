@@ -12,12 +12,14 @@ from .base import Operator
 
 # 将filler矩阵填充在to_be_filled的对角线上
 def fillDiag(to_be_filled: np.matrix, filler: np.matrix) -> np.matrix:
-    assert to_be_filled.shape[0] / filler.shape[0] == \
-           to_be_filled.shape[1] / filler.shape[1]
+    assert (
+        to_be_filled.shape[0] / filler.shape[0]
+        == to_be_filled.shape[1] / filler.shape[1]
+    )
     n = int(to_be_filled.shape[0] / filler.shape[0])
     r, c = filler.shape
     for i in range(n):
-        to_be_filled[i * r:(i + 1) * r, i * c:(i + 1) * c] = filler
+        to_be_filled[i * r : (i + 1) * r, i * c : (i + 1) * c] = filler
     return to_be_filled
 
 
@@ -40,8 +42,10 @@ class MatMal(Operator):
         super(MatMal, self).__init__(*parents, **kwargs)
 
     def calcValue(self) -> None:
-        assert len(self.nparents) == 2 and \
-            self.nparents[0].shape[1] == self.nparents[1].shape[0]
+        assert (
+            len(self.nparents) == 2
+            and self.nparents[0].shape[1] == self.nparents[1].shape[0]
+        )
         self.value = (self.nparents[0].value * self.nparents[1].value).astype("float32")
 
     def calcJacobi(self, parent: Any) -> np.matrix:
@@ -61,8 +65,9 @@ class Multiply(Operator):
         super(Multiply, self).__init__(*parents, **kwargs)
 
     def calcValue(self) -> None:
-        self.value = np.multiply(
-            self.nparents[0].value, self.nparents[1].value).astype("float32")
+        self.value = np.multiply(self.nparents[0].value, self.nparents[1].value).astype(
+            "float32"
+        )
 
     def calcJacobi(self, parent: Any) -> np.matrix:
         if parent is self.nparents[0]:
@@ -92,8 +97,8 @@ class Concat(Operator):
 
     def calcValue(self) -> None:
         self.value = np.concatenate(
-            [p.value.flatten() for p in self.nparents],
-            axis=self.axis).T
+            [p.value.flatten() for p in self.nparents], axis=self.axis
+        ).T
 
     def calcJacobi(self, parent: Any) -> np.matrix:
         assert parent in self.nparents
@@ -103,5 +108,5 @@ class Concat(Operator):
         assert dim == dims[index]
         jacobi = np.mat(np.zeros((self.dim, dim)))
         start_row = int(np.sum(dims[:index]))
-        jacobi[start_row: start_row + dim, 0: dim] = np.eye(dim)
+        jacobi[start_row : start_row + dim, 0:dim] = np.eye(dim)
         return jacobi.astype("float32")

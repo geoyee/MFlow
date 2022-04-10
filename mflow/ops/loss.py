@@ -1,6 +1,6 @@
 import numpy as np
 from typing import Any
-from .base import  Operator, _ePower
+from .base import Operator, _ePower
 from .act import SoftMax
 
 
@@ -24,8 +24,9 @@ class PerceptionLoss(Loss):
         super(PerceptionLoss, self).__init__(*parents, **kwargs)
 
     def calcValue(self) -> None:
-        self.value = np.mat(np.where(
-            self.nparents[0].value >= 0.0, 0.0, -self.nparents[0].value)).astype("float32")
+        self.value = np.mat(
+            np.where(self.nparents[0].value >= 0.0, 0.0, -self.nparents[0].value)
+        ).astype("float32")
 
     def calcJacobi(self, parent: Any) -> np.matrix:
         diag = np.where(parent.value >= 0.0, 0.0, -1)
@@ -56,8 +57,9 @@ class CrossEntropyWithSoftMax(Loss):
 
     def calcValue(self) -> None:
         self.prob = SoftMax.softmax(self.nparents[0].value).astype("float32")
-        self.value = np.mat(-np.sum(np.multiply(
-            self.nparents[1].value, np.log(self.prob + self.eps)))).astype("float32")
+        self.value = np.mat(
+            -np.sum(np.multiply(self.nparents[1].value, np.log(self.prob + self.eps)))
+        ).astype("float32")
 
     def calcJacobi(self, parent: Any) -> np.matrix:
         # 交叉熵时计算Jacobi比SoftMax计算Jacobi来的更容易

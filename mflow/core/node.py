@@ -27,8 +27,7 @@ class Node(object):
 
     def _setName(self, **kwargs: Any) -> None:
         self.name = kwargs.get(
-            "name", 
-            "{}:{}".format(self.__class__.__name__, self.graph.nodeConunt)
+            "name", "{}:{}".format(self.__class__.__name__, self.graph.nodeConunt)
         )
         if self.graph.name_scope:
             self.name = "{}/{}".format(self.graph.name_scope, self.name)
@@ -42,7 +41,7 @@ class Node(object):
     def calcValue(self) -> None:
         NotImplementedError()
 
-    def resetValue(self, recursive: bool=True) -> None:
+    def resetValue(self, recursive: bool = True) -> None:
         self.value = None
         if recursive:
             for child in self.nchildrens:
@@ -68,7 +67,7 @@ class Node(object):
 
 # 参数类
 class Variable(Node):
-    def __init__(self, size: Tuple, trainable: bool=True, **kwargs: Any) -> None:
+    def __init__(self, size: Tuple, trainable: bool = True, **kwargs: Any) -> None:
         super(Variable, self).__init__(**kwargs)  # 变量没有父节点
         self.size = size
         self.trainable = trainable

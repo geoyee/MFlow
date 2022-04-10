@@ -8,8 +8,9 @@ class Step(Operator):
         super(Step, self).__init__(*parents, **kwargs)
 
     def calcValue(self) -> None:
-        self.value = np.mat(
-            np.where(self.nparents[0].value >= 0.0, 1.0, 0.0)).astype("float32")
+        self.value = np.mat(np.where(self.nparents[0].value >= 0.0, 1.0, 0.0)).astype(
+            "float32"
+        )
 
     def calcJacobi(self, parent: Any) -> np.matrix:
         return np.mat(np.zeros(self.dim)).astype("float32")
@@ -25,7 +26,9 @@ class Logistic(Operator):
         self.value = np.mat(1.0 / (1.0 + _ePower(ix))).astype("float32")
 
     def calcJacobi(self, parent: Any) -> np.matrix:
-        return np.diag(np.mat(np.multiply(self.value, 1 - self.value)).A1).astype("float32")
+        return np.diag(np.mat(np.multiply(self.value, 1 - self.value)).A1).astype(
+            "float32"
+        )
 
 
 class SoftMax(Operator):
@@ -46,12 +49,13 @@ class SoftMax(Operator):
 class Tanh(Operator):
     def __init__(self, *parents: Any, **kwargs: Any) -> None:
         super(Tanh, self).__init__(*parents, **kwargs)
-        
+
     def calcValue(self) -> None:
         x = self.nparents[0].value
         ix = -x
         self.value = np.mat(
-            (_ePower(x) - _ePower(ix)) / (_ePower(x) + _ePower(ix))).astype("float32")
+            (_ePower(x) - _ePower(ix)) / (_ePower(x) + _ePower(ix))
+        ).astype("float32")
 
     def calcJacobi(self, parent: Any) -> np.matrix:
         return np.mat(1 - np.power(self.value, 2)).astype("float32")
@@ -63,11 +67,15 @@ class ReLU(Operator):
         self.nslope = 0.1  # LeakyReLU:0.1, ReLU:0
 
     def calcValue(self) -> None:
-        self.value = np.mat(np.where(
-            self.nparents[0].value > 0.0,
-            self.nparents[0].value,
-            self.nslope * self.nparents[0].value)).astype("float32")
+        self.value = np.mat(
+            np.where(
+                self.nparents[0].value > 0.0,
+                self.nparents[0].value,
+                self.nslope * self.nparents[0].value,
+            )
+        ).astype("float32")
 
     def calcJacobi(self, parent: Any) -> np.matrix:
-        return np.diag(np.where(
-            self.nparents[0].value.A1 > 0.0, 1.0, self.nslope)).astype("float32")
+        return np.diag(
+            np.where(self.nparents[0].value.A1 > 0.0, 1.0, self.nslope)
+        ).astype("float32")
