@@ -11,7 +11,7 @@ class Optimizer(object):
         self.lr = lr
         self.eps = 1e-12
         # Mini Batch中的样本梯度
-        self.acc_grads = {}
+        self.acc_grads = dict()
         self.acc_idx = 0
 
     def step(self) -> None:
@@ -33,14 +33,15 @@ class Optimizer(object):
         for node, grid in node_grids_dict.items():
             if isinstance(node, Node):
                 pass
-            # 下面node可能是node_name
-            target_node = getNodeByName(node)
-            assert target_node is not None
-            assert self.acc_grads[target_node].shape == grid.shape
-            if summarize:
-                self.acc_grads[target_node] += grid
             else:
-                self.acc_grads[target_node] = grid
+                # 下面node可能是node_name
+                target_node = getNodeByName(node)
+                assert target_node is not None
+                assert self.acc_grads[target_node].shape == grid.shape
+                if summarize:
+                    self.acc_grads[target_node] += grid
+                else:
+                    self.acc_grads[target_node] = grid
         if summarize:
             self.acc_idx += acc_idx
         else:
@@ -53,6 +54,7 @@ class Optimizer(object):
     def update(self, var_grads: Union[None, Dict]=None) -> None:
         if var_grads is not None:
             self.applyGrads(var_grads)
+        # 更新
         self._update()
         # 清理
         self.acc_grads.clear()

@@ -40,12 +40,12 @@ class LogLoss(Loss):
     def calcValue(self) -> None:
         assert len(self.nparents) == 1
         x = self.nparents[0].value
-        # 数值截断，防止溢出
-        self.value = np.log(1 + _ePower(-x)).astype("float32")
+        ix = -x
+        self.value = np.log(1 + _ePower(ix)).astype("float32")
 
     def calcJacobi(self, parent: Any) -> np.matrix:
         x = parent.value
-        diag = -1.0 / (1.0 + _ePower(x))
+        diag = -1 / (1 + _ePower(x))
         return np.diag(diag.ravel()).astype("float32")
 
 

@@ -21,7 +21,8 @@ class Logistic(Operator):
 
     def calcValue(self) -> None:
         x = self.nparents[0].value
-        self.value = np.mat(1.0 / (1.0 + _ePower(-x))).astype("float32")
+        ix = -x
+        self.value = np.mat(1.0 / (1.0 + _ePower(ix))).astype("float32")
 
     def calcJacobi(self, parent: Any) -> np.matrix:
         return np.diag(np.mat(np.multiply(self.value, 1 - self.value)).A1).astype("float32")
@@ -48,9 +49,9 @@ class Tanh(Operator):
         
     def calcValue(self) -> None:
         x = self.nparents[0].value
-        # FIXME: 还是可能溢出，不知为何
+        ix = -x
         self.value = np.mat(
-            (_ePower(x) - _ePower(-x)) / (_ePower(x) + _ePower(-x))).astype("float32")
+            (_ePower(x) - _ePower(ix)) / (_ePower(x) + _ePower(ix))).astype("float32")
 
     def calcJacobi(self, parent: Any) -> np.matrix:
         return np.mat(1 - np.power(self.value, 2)).astype("float32")

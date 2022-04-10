@@ -49,13 +49,14 @@ class Node(object):
                 child.resetValue()
 
     def backward(self, result: Any) -> np.matrix:
-        if self.jacobi is None and self is result:
-            self.jacobi = np.mat(np.eye(self.dim))
-        else:
-            self.jacobi = np.mat(np.zeros((result.dim, self.dim)))
-            for child in self.nchildrens:
-                if child.value is not None:
-                    self.jacobi += child.backward(result) * child.calcJacobi(self)
+        if self.jacobi is None:
+            if self is result:
+                self.jacobi = np.mat(np.eye(self.dim))
+            else:
+                self.jacobi = np.mat(np.zeros((result.dim, self.dim)))
+                for child in self.nchildrens:
+                    if child.value is not None:
+                        self.jacobi += child.backward(result) * child.calcJacobi(self)
         return self.jacobi
 
     def calcJacobi(self, parent: Any) -> np.matrix:

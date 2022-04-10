@@ -31,7 +31,7 @@ class Add(Operator):
             self.value += parent.value
 
     def calcJacobi(self, parent: Any) -> np.matrix:
-        return np.mat(np.eye(self.dim))
+        return np.mat(np.eye(self.dim)).astype("float32")
 
 
 # 矩阵乘法
@@ -82,7 +82,7 @@ class Reshape(Operator):
 
     def calcJacobi(self, parent: Any) -> np.matrix:
         assert parent is self.nparents[0]
-        return np.mat(np.eye(self.dim))
+        return np.mat(np.eye(self.dim)).astype("float32")
 
 
 class Concat(Operator):
@@ -99,8 +99,9 @@ class Concat(Operator):
         assert parent in self.nparents
         dims = [p.dim for p in self.nparents]
         index = self.nparents.index(parent)
-        assert parent.dim == dims[index]
-        jacobi = np.mat(np.zeros(self.dim, parent.dim))
+        dim = int(parent.dim)
+        assert dim == dims[index]
+        jacobi = np.mat(np.zeros((self.dim, dim)))
         start_row = int(np.sum(dims[:index]))
-        jacobi[start_row: start_row + parent.dim, 0: parent.dim] = np.eye(parent.dim)
+        jacobi[start_row: start_row + dim, 0: dim] = np.eye(dim)
         return jacobi.astype("float32")
