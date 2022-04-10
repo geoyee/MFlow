@@ -1,7 +1,5 @@
 matplotlib
 networkx
-numpy
-
-# 非主要
+numpy  # 主要
 pandas
 scikit-learn
