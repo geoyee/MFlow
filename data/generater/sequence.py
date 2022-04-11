@@ -19,8 +19,8 @@ def waveData(
         for _ in range(num_sample // 2):
             sequence = data + np.random.normal(0, 0.6, (len(data), dim))
             label = np.array([int(i == k) for k in range(2)])
-            datas.append(np.c_[sequence.reshape(1, -1), label.reshape(-1, 1)])
+            datas.append(np.c_[sequence.reshape(1, -1), label.reshape(1, -1)])
     datas = np.concatenate(datas, axis=0)
     if shuffle:
         np.random.shuffle(datas)
-    return datas[:, :-2].reshape(-1, lenght, dim), data[:, -2:]
+    return datas[:, :-2].reshape(-1, lenght, dim), datas[:, -2:]

@@ -36,9 +36,9 @@ class SoftMax(Operator):
         super(SoftMax, self).__init__(*parents, **kwargs)
 
     @staticmethod
-    def softmax(x: np.matrix) -> np.matrix:
+    def softmax(x: np.matrix, eps: float = 1e-12) -> np.matrix:
         ep = _ePower(x)
-        return np.mat(ep / sum(ep))
+        return np.mat(ep / sum(ep) + eps)
 
     def calcValue(self) -> None:
         self.value = SoftMax.softmax(self.nparents[0].value).astype("float32")
@@ -54,7 +54,7 @@ class Tanh(Operator):
         x = self.nparents[0].value
         ix = -x
         self.value = np.mat(
-            (_ePower(x) - _ePower(ix)) / (_ePower(x) + _ePower(ix))
+            (_ePower(x) - _ePower(ix)) / (_ePower(x) + _ePower(ix) + self.eps)
         ).astype("float32")
 
     def calcJacobi(self, parent: Any) -> np.matrix:

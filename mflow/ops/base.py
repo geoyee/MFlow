@@ -13,3 +13,4 @@ def _ePower(x, trunc=1e2):
 class Operator(Node):
     def __init__(self, *parents: Any, **kwargs: Any) -> None:
         super(Operator, self).__init__(*parents, **kwargs)
+        self.eps = 1e-12

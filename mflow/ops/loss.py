@@ -15,7 +15,6 @@ from .act import SoftMax
 class Loss(Operator):
     def __init__(self, *parents: Any, **kwargs: Any) -> None:
         super(Loss, self).__init__(*parents, **kwargs)
-        self.eps = 1e-12
 
 
 # 感知机损失
