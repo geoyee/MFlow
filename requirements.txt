@@ -1,5 +1,6 @@
 matplotlib
 networkx
-numpy  # 主要
+numpy
 pandas
 scikit-learn
+sicpy
