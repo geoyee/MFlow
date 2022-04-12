@@ -1,6 +1,7 @@
 import numpy as np
 from typing import Any
 from .base import Operator
+from ..core import Node
 
 
 """ 注意
@@ -110,3 +111,26 @@ class Concat(Operator):
         start_row = int(np.sum(dims[:index]))
         jacobi[start_row : start_row + dim, 0:dim] = np.eye(dim)
         return jacobi.astype("float32")
+
+
+# 焊接点
+class Welding(Operator):
+    def __init__(self, *parents: Any, **kwargs: Any) -> None:
+        super(Welding, self).__init__(*parents, **kwargs)
+
+    def calcValue(self) -> None:
+        assert len(self.nparents) == 1 and self.nparents[0] is not None
+        self.value = self.nparents[0].value
+
+    def calcJacobi(self, parent: Any) -> np.matrix:
+        assert parent is self.nparents[0]
+        return np.mat(np.eye(self.dim)).astype("float32")
+
+    def weld(self, node: Node) -> None:
+        # 与之前的父节点断开
+        if len(self.nparents) == 1 and self.nparents[0] is not None:
+            self.nparents[0].nchildrens.remove(self)
+        self.nparents.clear()
+        # 与传入节点焊接
+        self.nparents.append(node)
+        node.nchildrens.append(self)
