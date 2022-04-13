@@ -77,6 +77,22 @@ class Multiply(Operator):
             return np.diag(self.nparents[0].value.A1).astype("float32")
 
 
+class ScalarMultiply(Operator):
+    def __init__(self, *parents: Any, **kwargs: Any) -> None:
+        super(ScalarMultiply, self).__init__(*parents, **kwargs)
+
+    def calcValue(self) -> None:
+        assert self.nparents[0].shape == (1, 1)  # 第一个父节点是标量
+        self.value = np.multiply(self.nparents[0].value, self.nparents[1].value)
+
+    def calcJacobi(self, parent: Any) -> np.matrix:
+        assert parent in self.nparents
+        if parent is self.nparents[0]:
+            return self.nparents[1].value.flatten().T
+        else:
+            return np.mat(np.eye(self.nparents[1].dim)) * self.nparents[0].value[0, 0]
+
+
 class Reshape(Operator):
     def __init__(self, *parents: Any, **kwargs: Any) -> None:
         super(Reshape, self).__init__(*parents, **kwargs)
@@ -113,7 +129,7 @@ class Concat(Operator):
         return jacobi.astype("float32")
 
 
-# 焊接点
+# 焊接
 class Welding(Operator):
     def __init__(self, *parents: Any, **kwargs: Any) -> None:
         super(Welding, self).__init__(*parents, **kwargs)
@@ -134,3 +150,66 @@ class Welding(Operator):
         # 与传入节点焊接
         self.nparents.append(node)
         node.nchildrens.append(self)
+
+
+# 卷积
+class Convolve(Operator):
+    def __init__(self, *parents: Any, **kwargs: Any) -> None:
+        super(Convolve, self).__init__(*parents, **kwargs)
+        assert len(self.nparents) == 2  # 图像与卷积核
+        self.padded = None
+
+    def calcValue(self) -> None:
+        data = self.nparents[0].value
+        kernel = self.nparents[1].value
+        self.w, self.h = data.shape
+        self.kw, self.kh = kernel.shape
+        self.hkw, self.hkh = int(self.kw / 2), int(self.kh / 2)
+        self.pw, self.ph = tuple(
+            np.add(data.shape, np.multiply((self.hkw, self.hkh), 2))
+        )
+        # 数据补充
+        self.padded = np.mat(np.zeros((self.pw, self.ph)))
+        self.padded[self.hkw : self.hkw + self.w, self.hkh : self.hkh + self.h] = data
+        # 开始卷积
+        self.value = np.mat(np.zeros((self.w, self.h))).astype("float32")
+        for i in np.arange(self.hkw, self.hkw + self.w):
+            for j in np.arange(self.hkh, self.hkh + self.h):
+                self.value[i - self.hkw, j - self.hkh] = np.sum(
+                    np.multiply(
+                        self.padded[
+                            i - self.hkw : i - self.hkw + self.kw,
+                            j - self.hkh : j - self.hkh + self.kh,
+                        ],
+                        kernel,
+                    )
+                )
+
+    def calcJacobi(self, parent: Any) -> np.matrix:
+        kernel = self.nparents[1].value
+        jacobi = []
+        if parent is self.nparents[0]:  # 图像
+            for i in np.arange(self.hkw, self.hkw + self.w):
+                for j in np.arange(self.hkh, self.hkh + self.h):
+                    mask = np.mat(np.zeros((self.pw, self.ph)))
+                    mask[
+                        i - self.hkw : i - self.hkw + self.kw,
+                        j - self.hkh : j - self.hkh + self.kh,
+                    ] = kernel
+                    jacobi.append(
+                        mask[
+                            self.hkw : self.hkw + self.w, self.hkh : self.hkh + self.h
+                        ].A1
+                    )
+        elif parent is self.nparents[1]:  # 卷积核
+            for i in np.arange(self.hkw, self.hkw + self.w):
+                for j in np.arange(self.hkh, self.hkh + self.h):
+                    jacobi.append(
+                        self.padded[
+                            i - self.hkw : i - self.hkw + self.kw,
+                            j - self.hkh : j - self.hkh + self.kh,
+                        ].A1
+                    )
+        else:
+            raise Exception("It's not {0}'s father node.".format(self.name))
+        return np.mat(jacobi).astype("float32")
