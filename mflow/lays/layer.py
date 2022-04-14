@@ -49,3 +49,14 @@ def Conv(
             outputs.append(affine)
     assert len(outputs) == kernels
     return outputs
+
+
+# 池化层
+def Pooling(
+    feat_maps: List, kernel_shape: Tuple, stride: Tuple, mode: str = "Max"
+) -> List:
+    outputs = []
+    pooling = MaxPooling if mode == "Max" else AvePooling
+    for fm in feat_maps:
+        outputs.append(pooling(fm, size=kernel_shape, stride=stride))
+    return outputs

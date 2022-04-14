@@ -213,3 +213,87 @@ class Convolve(Operator):
         else:
             raise Exception("It's not {0}'s father node.".format(self.name))
         return np.mat(jacobi).astype("float32")
+
+
+class MaxPooling(Operator):
+    def __init__(self, *parents: Any, **kwargs: Any) -> None:
+        super(MaxPooling, self).__init__(*parents, **kwargs)
+        self.stride = kwargs.get("stride")
+        assert isinstance(self.stride, tuple) and len(self.stride) == 2
+        self.size = kwargs.get("size")
+        assert isinstance(self.size, tuple) and len(self.size) == 2
+        self.flag = None
+
+    def calcValue(self) -> None:
+        data = self.nparents[0].value
+        w, h = data.shape
+        dim = data.dim
+        sw, sh = self.stride
+        kw, kh = self.size
+        hkw, hkh = int(kw / 2), int(kh / 2)
+        result = []
+        flag = []
+        for i in np.arange(0, w, sw):
+            row = []
+            for j in np.arange(0, h, sh):
+                # 取池化窗口的最大值
+                top, bottom = max(0, i - hkw), min(w, i + hkw + 1)
+                left, right = max(0, j - hkh), min(h, j + hkh + 1)
+                window = data[top:bottom, left:right]
+                row.append(np.max(window))
+                # 记录最大值在原特征图的位置
+                pos = np.argmax(window)
+                w_width = right - left
+                offset_w, offset_h = top + pos // w_width, left + pos % w_width
+                offset = offset_w * w + offset_h
+                tmp = np.zeros(dim)
+                tmp[offset] = 1
+                flag.append(tmp)
+            result.append(row)
+        self.flag = np.mat(flag).astype("float32")
+        self.value = np.mat(result).astype("float32")
+
+    def calcJacobi(self, parent: Any) -> np.matrix:
+        assert parent is self.nparents[0] and self.jacobi is not None
+        return self.flag
+
+
+class AvePooling(Operator):
+    def __init__(self, *parents: Any, **kwargs: Any) -> None:
+        super(AvePooling, self).__init__(*parents, **kwargs)
+        self.stride = kwargs.get("stride")
+        assert isinstance(self.stride, tuple) and len(self.stride) == 2
+        self.size = kwargs.get("size")
+        assert isinstance(self.size, tuple) and len(self.size) == 2
+        self.flag = None
+
+    def calcValue(self) -> None:
+        data = self.nparents[0].value
+        w, h = data.shape
+        dim = data.dim
+        sw, sh = self.stride
+        kw, kh = self.size
+        hkw, hkh = int(kw / 2), int(kh / 2)
+        result = []
+        flag = []
+        for i in np.arange(0, w, sw):
+            row = []
+            for j in np.arange(0, h, sh):
+                # 取池化窗口的平均值
+                top, bottom = max(0, i - hkw), min(w, i + hkw + 1)
+                left, right = max(0, j - hkh), min(h, j + hkh + 1)
+                window = data[top:bottom, left:right]
+                ave = np.mean(window)
+                row.append(ave)
+                # 平均值还原
+                ww, wh = window.shape
+                w_dim = ww * wh
+                tmp = ave * w_dim * np.ones(dim)
+                flag.append(tmp)
+            result.append(row)
+        self.flag = np.mat(flag).astype("float32")
+        self.value = np.mat(result).astype("float32")
+
+    def calcJacobi(self, parent: Any) -> np.matrix:
+        assert parent is self.nparents[0] and self.jacobi is not None
+        return self.flag
