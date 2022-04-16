@@ -227,7 +227,7 @@ class MaxPooling(Operator):
     def calcValue(self) -> None:
         data = self.nparents[0].value
         w, h = data.shape
-        dim = data.dim
+        dim = w * h
         sw, sh = self.stride
         kw, kh = self.size
         hkw, hkh = int(kw / 2), int(kh / 2)
@@ -270,7 +270,7 @@ class AvePooling(Operator):
     def calcValue(self) -> None:
         data = self.nparents[0].value
         w, h = data.shape
-        dim = data.dim
+        dim = w * h
         sw, sh = self.stride
         kw, kh = self.size
         hkw, hkh = int(kw / 2), int(kh / 2)
