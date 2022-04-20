@@ -2,5 +2,6 @@ matplotlib
 networkx
 numpy
 pandas
+protobuf
 scikit-learn
 sicpy
