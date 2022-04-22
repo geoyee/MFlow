@@ -38,9 +38,9 @@ class Add(Operator):
 
 
 # 矩阵乘法
-class MatMal(Operator):
+class MatMul(Operator):
     def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(MatMal, self).__init__(*parents, **kwargs)
+        super(MatMul, self).__init__(*parents, **kwargs)
 
     def calcValue(self) -> None:
         assert (

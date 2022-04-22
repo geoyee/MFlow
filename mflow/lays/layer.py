@@ -9,7 +9,7 @@ def Linear(
 ) -> Operator:
     weight = Variable((size, input_size), trainable=True)
     bias = Variable((size, 1), trainable=True)
-    affine = Add(MatMal(weight, input), bias)
+    affine = Add(MatMul(weight, input), bias)
     if act == "ReLU":
         return ReLU(affine)
     elif act == "Logistic":
