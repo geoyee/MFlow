@@ -4,7 +4,7 @@ from ..lays import Conv, Pooling, Linear
 from typing import Dict
 
 
-# FIXME: 反向传播形状错误，可能是改了valid的卷积的原因
+# 太慢的跑起来
 def LeNet() -> Dict:
     """Lenet的keras实现"""
     with NameScope("Input"):

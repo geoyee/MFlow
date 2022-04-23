@@ -222,12 +222,7 @@ class Convolve(Operator):
                             ].A1
                         )
                     else:  # self.padding == "valid"
-                        jacobi.append(
-                            mask[
-                                self.hkw : self.w - self.hkw,
-                                self.hkh : self.h - self.hkh,
-                            ].A1
-                        )
+                        jacobi.append(mask[: self.w, : self.h].A1)
         elif parent is self.nparents[1]:  # 卷积核
             for i in self.i_range:
                 for j in self.j_range:

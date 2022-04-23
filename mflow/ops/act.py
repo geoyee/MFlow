@@ -38,7 +38,7 @@ class SoftMax(Operator):
     @staticmethod
     def softmax(x: np.matrix, eps: float = 1e-12) -> np.matrix:
         ep = _ePower(x)
-        return np.mat(ep / sum(ep) + eps)
+        return np.mat(ep / (sum(ep) + eps))
 
     def calcValue(self) -> None:
         self.value = SoftMax.softmax(self.nparents[0].value).astype("float32")

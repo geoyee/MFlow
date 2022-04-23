@@ -24,7 +24,7 @@ MFlow
 
 - [x] 把例子中的模型放到models中。
 - [x] 完善`train`的例子，检查是否存在问题。
-- [ ] 卷积的“valid”模式存在问题。
+- [x] `Convolve`的'valid'模式存在问题。
 - [ ] 完善`server`的例子，检查是否存在问题。
 - [ ] 搞清楚`ClassMining`的作用。
 
