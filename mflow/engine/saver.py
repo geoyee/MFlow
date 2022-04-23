@@ -4,6 +4,7 @@ import os
 import os.path as osp
 import numpy as np
 from ..core import Node, Variable, Graph, DefaultGraph, getNodeByName
+from ..metrics import Metric
 from ..utils import ClassMining
 from typing import Dict, Union
 
@@ -24,7 +25,9 @@ class Saver(object):
         if graph is None:
             graph = DefaultGraph
         else:
-            name = graph.name_scope if graph.name_scope is not None else "output"
+            name = graph.name_scope if graph.name_scope is not None else name
+            if name is None:
+                name = "output"
         # 元信息，如时间之类的信息
         meta = {} if meta is None else meta
         meta["save_time"] = str(datetime.datetime.now())
@@ -48,7 +51,7 @@ class Saver(object):
         with open(weight_file_path, "rb") as weight_file:
             weights_npz_files = np.load(weight_file)
             for file_name in weights_npz_files.files:
-                weight_file[file_name] = weights_npz_files[file_name]
+                weights_dict[file_name] = weights_npz_files[file_name]
             weights_npz_files.close()
         # 组合
         graph_json = model_json["graph"]
@@ -68,12 +71,13 @@ class Saver(object):
         for node in graph.nodes:
             if not node.saved:
                 continue
+            node.kargs.pop("name", None)
             node_json = {
                 "node_type": node.__class__.__name__,
                 "name": node.name,
                 "parents": [p.name for p in node.nparents],
                 "childrens": [c.name for c in node.nchildrens],
-                "kwargs": node.kwargs,
+                "kargs": node.kargs,
             }
             # 保存节点dim信息
             if node.value is not None:
@@ -96,7 +100,7 @@ class Saver(object):
             print("Save weights to file: {}.".format(weights_file.name))
 
     def _restoreNodes(self, graph: Graph, model_json: Dict, weights_dict: Dict) -> None:
-        for idx in range(len(model_json.keys())):
+        for idx in range(len(model_json)):
             node_json = model_json[idx]
             node_name = node_json["name"]
             weights = None
@@ -120,8 +124,8 @@ class Saver(object):
         node_name = node_json["name"]
         parents_name = node_json["parents"]
         dim = node_json.get("dim", None)
-        kwargs = node_json.get("kwargs", None)
-        kwargs["graph"] = graph
+        kargs = node_json.get("kargs", None)
+        kargs["graph"] = graph
         parents = []
         for parent_name in parents_name:
             parent_node = getNodeByName(parent_name, graph=graph)
@@ -137,11 +141,15 @@ class Saver(object):
         # 反射创建节点实例
         if node_type == "Variable":
             assert dim is not None
-            dim = tuple(dim)
             return ClassMining.getInstanceBySubclassName(Node, node_type)(
-                *parents, dim=dim, name=node_name, **kwargs
+                *parents, size=tuple(dim), name=node_name, **kargs
             )
         else:
-            return ClassMining.getInstanceBySubclassName(Node, node_type)(
-                *parents, name=node_name, **kwargs
-            )
+            try:
+                return ClassMining.getInstanceBySubclassName(Node, node_type)(
+                    *parents, name=node_name, **kargs
+                )
+            except:  # TODO: Metric的在Node下找不到，不知为啥
+                return ClassMining.getInstanceBySubclassName(Metric, node_type)(
+                    *parents, name=node_name, **kargs
+                )

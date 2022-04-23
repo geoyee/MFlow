@@ -18,7 +18,7 @@ class Trainer(object):
         evalable: bool = True,
         metrics_ops: Union[None, List] = None,
         *args,
-        **kwargs
+        **kargs
     ) -> None:
         self.inputs = input_x
         self.y = input_y
@@ -37,6 +37,9 @@ class Trainer(object):
         val_x: Union[None, Dict] = None,
         val_y: Union[None, List, np.ndarray] = None,
     ) -> None:
+        assert len(train_x) == len(self.inputs)
+        if val_x is not None and val_y is not None:
+            assert len(val_x) == len(self.inputs)
         self._initVars()
         self.mainLoop(train_x, train_y, val_x, val_y)
 
@@ -58,7 +61,6 @@ class Trainer(object):
             if (i + 1) % self.batch_size == 0:
                 self._optimizerUpdate()
 
-    # 需要完成metrics节点
     def eval(self, val_x: Dict, val_y: Union[List, np.ndarray]) -> None:
         for metrics_op in self.metrics_ops:
             metrics_op.resetValue()
@@ -76,8 +78,8 @@ class Trainer(object):
         for i in range(len(self.inputs)):
             # 根据输入节点的名称进行数据的查找
             input_value = data_x.get(self.inputs[i].name)
-            self.inputs[i].setValue(np.mat(input_value).T)
-        self.y.setValue(np.mat(data_y).T)
+            self.inputs[i].setValue(np.mat(input_value))
+        self.y.setValue(np.mat(data_y))
         if not is_eval:
             self.opt.step()
 
@@ -87,7 +89,7 @@ class Trainer(object):
             input_dict[node_name] = x[node_name][index]
             return input_dict
 
-    # 由于分布式的话不太相同，因此留给否面实现
+    # 由于分布式的话不太相同，因此留给后面实现
     def _initVars(self) -> None:
         raise NotImplementedError()
 
@@ -108,7 +110,7 @@ class SimpleTrainer(Trainer):
         evalable: bool = True,
         metrics_ops: Union[None, List] = None,
         *args,
-        **kwargs
+        **kargs
     ) -> None:
         super(SimpleTrainer, self).__init__(
             input_x,
@@ -120,7 +122,7 @@ class SimpleTrainer(Trainer):
             evalable,
             metrics_ops,
             *args,
-            **kwargs
+            **kargs
         )
 
     def _initVars(self) -> None:

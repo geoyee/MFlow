@@ -13,14 +13,14 @@ from .act import SoftMax
 
 # 损失函数类
 class Loss(Operator):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(Loss, self).__init__(*parents, **kwargs)
+    def __init__(self, *parents: Any, **kargs: Any) -> None:
+        super(Loss, self).__init__(*parents, **kargs)
 
 
 # 感知机损失
 class PerceptionLoss(Loss):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(PerceptionLoss, self).__init__(*parents, **kwargs)
+    def __init__(self, *parents: Any, **kargs: Any) -> None:
+        super(PerceptionLoss, self).__init__(*parents, **kargs)
 
     def calcValue(self) -> None:
         self.value = np.mat(
@@ -34,8 +34,8 @@ class PerceptionLoss(Loss):
 
 # 对数损失
 class LogLoss(Loss):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(LogLoss, self).__init__(*parents, **kwargs)
+    def __init__(self, *parents: Any, **kargs: Any) -> None:
+        super(LogLoss, self).__init__(*parents, **kargs)
 
     def calcValue(self) -> None:
         assert len(self.nparents) == 1
@@ -51,8 +51,8 @@ class LogLoss(Loss):
 
 # 交叉熵损失
 class CrossEntropyWithSoftMax(Loss):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(CrossEntropyWithSoftMax, self).__init__(*parents, **kwargs)
+    def __init__(self, *parents: Any, **kargs: Any) -> None:
+        super(CrossEntropyWithSoftMax, self).__init__(*parents, **kargs)
 
     def calcValue(self) -> None:
         self.prob = SoftMax.softmax(self.nparents[0].value).astype("float32")

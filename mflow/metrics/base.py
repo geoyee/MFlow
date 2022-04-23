@@ -4,9 +4,9 @@ from typing import Any
 
 
 class Metric(Node):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(Metric, self).__init__(*parents, **kwargs)
-        kwargs["saved"] = kwargs.get("saved", False)
+    def __init__(self, *parents: Any, **kargs: Any) -> None:
+        super(Metric, self).__init__(*parents, **kargs)
+        kargs["saved"] = kargs.get("saved", False)
         self.init()
 
     def init(self) -> None:
@@ -22,7 +22,10 @@ class Metric(Node):
     @staticmethod
     def prob2Label(prob: np.ndarray, threshold: float = 0.5) -> int:
         if prob.shape[0] > 1:
-            labels = np.argmax(prob, axis=0)
+            # 如果是多分类，预测类别为概率最大的类别
+            labels = np.zeros((prob.shape[0], 1))
+            labels[np.argmax(prob, axis=0)] = 1
         else:
-            labels - np.where(prob < threshold, 0, 1)
+            # 否则以thresholds为概率阈值判断类别
+            labels = np.where(prob < threshold, -1, 1)
         return labels

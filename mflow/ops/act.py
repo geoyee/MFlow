@@ -4,8 +4,8 @@ from .base import Operator, _ePower
 
 
 class Step(Operator):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(Step, self).__init__(*parents, **kwargs)
+    def __init__(self, *parents: Any, **kargs: Any) -> None:
+        super(Step, self).__init__(*parents, **kargs)
 
     def calcValue(self) -> None:
         self.value = np.mat(np.where(self.nparents[0].value >= 0.0, 1.0, 0.0)).astype(
@@ -17,8 +17,8 @@ class Step(Operator):
 
 
 class Logistic(Operator):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(Logistic, self).__init__(*parents, **kwargs)
+    def __init__(self, *parents: Any, **kargs: Any) -> None:
+        super(Logistic, self).__init__(*parents, **kargs)
 
     def calcValue(self) -> None:
         x = self.nparents[0].value
@@ -32,8 +32,8 @@ class Logistic(Operator):
 
 
 class SoftMax(Operator):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(SoftMax, self).__init__(*parents, **kwargs)
+    def __init__(self, *parents: Any, **kargs: Any) -> None:
+        super(SoftMax, self).__init__(*parents, **kargs)
 
     @staticmethod
     def softmax(x: np.matrix, eps: float = 1e-12) -> np.matrix:
@@ -47,8 +47,8 @@ class SoftMax(Operator):
 
 
 class Tanh(Operator):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(Tanh, self).__init__(*parents, **kwargs)
+    def __init__(self, *parents: Any, **kargs: Any) -> None:
+        super(Tanh, self).__init__(*parents, **kargs)
 
     def calcValue(self) -> None:
         x = self.nparents[0].value
@@ -62,8 +62,8 @@ class Tanh(Operator):
 
 
 class ReLU(Operator):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(ReLU, self).__init__(*parents, **kwargs)
+    def __init__(self, *parents: Any, **kargs: Any) -> None:
+        super(ReLU, self).__init__(*parents, **kargs)
         self.nslope = 0.1  # LeakyReLU:0.1, ReLU:0
 
     def calcValue(self) -> None:

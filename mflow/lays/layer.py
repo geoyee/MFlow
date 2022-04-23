@@ -27,15 +27,24 @@ def Conv(
     kernels: int,
     kernel_shape: Tuple,
     act: Union[str, None] = "ReLU",
+    padding: str = "same",
 ) -> List:
-    ones = Variable(input_shape, trainable=False)
-    ones.setValue(np.mat(np.ones(input_shape)))
+    if padding == "same":
+        ones = Variable(input_shape, trainable=False)
+        ones.setValue(np.mat(np.ones(input_shape)))
+    else:  # self.padding == "valid"
+        bias_shape = (
+            input_shape[0] - (2 * int(kernel_shape[0] / 2)),
+            input_shape[1] - (2 * int(kernel_shape[1] / 2)),
+        )
+        ones = Variable(bias_shape, trainable=False)
+        ones.setValue(np.mat(np.ones(bias_shape)))
     outputs = []
     for _ in range(kernels):
         channels = []
         for fm in feat_maps:
             kernel = Variable(kernel_shape, trainable=True)
-            channels.append(Convolve(fm, kernel))
+            channels.append(Convolve(fm, kernel, padding=padding))
         channels = Add(*channels)
         bias = ScalarMultiply(Variable(size=(1, 1), trainable=True), ones)
         affine = Add(channels, bias)

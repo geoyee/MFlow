@@ -5,10 +5,11 @@ from .graph import DefaultGraph
 
 # 节点类
 class Node(object):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        self.graph = kwargs.get("graph", DefaultGraph)
-        self.saved = kwargs.get("saved", True)
-        self._setName(**kwargs)
+    def __init__(self, *parents: Any, **kargs: Any) -> None:
+        self.kargs = kargs
+        self.graph = kargs.get("graph", DefaultGraph)
+        self.saved = kargs.get("saved", True)
+        self._setName(**kargs)
         self.value = None
         self.jacobi = None
         self.nchildrens = []
@@ -25,8 +26,8 @@ class Node(object):
     def shape(self) -> Tuple:
         return self.value.shape
 
-    def _setName(self, **kwargs: Any) -> None:
-        self.name = kwargs.get(
+    def _setName(self, **kargs: Any) -> None:
+        self.name = kargs.get(
             "name", "{}:{}".format(self.__class__.__name__, self.graph.nodeConunt)
         )
         if self.graph.name_scope:
@@ -67,8 +68,8 @@ class Node(object):
 
 # 参数类
 class Variable(Node):
-    def __init__(self, size: Tuple, trainable: bool = True, **kwargs: Any) -> None:
-        super(Variable, self).__init__(**kwargs)  # 变量没有父节点
+    def __init__(self, size: Tuple, trainable: bool = True, **kargs: Any) -> None:
+        super(Variable, self).__init__(**kargs)  # 变量没有父节点
         self.size = size
         self.trainable = trainable
         if trainable:

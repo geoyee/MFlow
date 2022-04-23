@@ -1,0 +1,1260 @@
+{
+    "meta": {
+        "save_time": "2022-04-23 09:10:38.375696",
+        "file_name": "MnistNet"
+    },
+    "service": {},
+    "graph": [
+        {
+            "node_type": "Variable",
+            "name": "Input/Variable:0",
+            "parents": [],
+            "childrens": [
+                "Model/Convolve:3",
+                "Model/Convolve:10",
+                "Model/Convolve:17"
+            ],
+            "kargs": {},
+            "dim": [
+                28,
+                28
+            ]
+        },
+        {
+            "node_type": "Variable",
+            "name": "Model/Variable:1",
+            "parents": [],
+            "childrens": [
+                "Model/ScalarMultiply:6",
+                "Model/ScalarMultiply:13",
+                "Model/ScalarMultiply:20"
+            ],
+            "kargs": {},
+            "dim": [
+                28,
+                28
+            ]
+        },
+        {
+            "node_type": "Variable",
+            "name": "Model/Variable:2",
+            "parents": [],
+            "childrens": [
+                "Model/Convolve:3"
+            ],
+            "kargs": {},
+            "dim": [
+                5,
+                5
+            ]
+        },
+        {
+            "node_type": "Convolve",
+            "name": "Model/Convolve:3",
+            "parents": [
+                "Input/Variable:0",
+                "Model/Variable:2"
+            ],
+            "childrens": [
+                "Model/Add:4"
+            ],
+            "kargs": {
+                "padding": "same"
+            },
+            "dim": [
+                28,
+                28
+            ]
+        },
+        {
+            "node_type": "Add",
+            "name": "Model/Add:4",
+            "parents": [
+                "Model/Convolve:3"
+            ],
+            "childrens": [
+                "Model/Add:7"
+            ],
+            "kargs": {},
+            "dim": [
+                28,
+                28
+            ]
+        },
+        {
+            "node_type": "Variable",
+            "name": "Model/Variable:5",
+            "parents": [],
+            "childrens": [
+                "Model/ScalarMultiply:6"
+            ],
+            "kargs": {},
+            "dim": [
+                1,
+                1
+            ]
+        },
+        {
+            "node_type": "ScalarMultiply",
+            "name": "Model/ScalarMultiply:6",
+            "parents": [
+                "Model/Variable:5",
+                "Model/Variable:1"
+            ],
+            "childrens": [
+                "Model/Add:7"
+            ],
+            "kargs": {},
+            "dim": [
+                28,
+                28
+            ]
+        },
+        {
+            "node_type": "Add",
+            "name": "Model/Add:7",
+            "parents": [
+                "Model/Add:4",
+                "Model/ScalarMultiply:6"
+            ],
+            "childrens": [
+                "Model/ReLU:8"
+            ],
+            "kargs": {},
+            "dim": [
+                28,
+                28
+            ]
+        },
+        {
+            "node_type": "ReLU",
+            "name": "Model/ReLU:8",
+            "parents": [
+                "Model/Add:7"
+            ],
+            "childrens": [
+                "Model/MaxPooling:23"
+            ],
+            "kargs": {},
+            "dim": [
+                28,
+                28
+            ]
+        },
+        {
+            "node_type": "Variable",
+            "name": "Model/Variable:9",
+            "parents": [],
+            "childrens": [
+                "Model/Convolve:10"
+            ],
+            "kargs": {},
+            "dim": [
+                5,
+                5
+            ]
+        },
+        {
+            "node_type": "Convolve",
+            "name": "Model/Convolve:10",
+            "parents": [
+                "Input/Variable:0",
+                "Model/Variable:9"
+            ],
+            "childrens": [
+                "Model/Add:11"
+            ],
+            "kargs": {
+                "padding": "same"
+            },
+            "dim": [
+                28,
+                28
+            ]
+        },
+        {
+            "node_type": "Add",
+            "name": "Model/Add:11",
+            "parents": [
+                "Model/Convolve:10"
+            ],
+            "childrens": [
+                "Model/Add:14"
+            ],
+            "kargs": {},
+            "dim": [
+                28,
+                28
+            ]
+        },
+        {
+            "node_type": "Variable",
+            "name": "Model/Variable:12",
+            "parents": [],
+            "childrens": [
+                "Model/ScalarMultiply:13"
+            ],
+            "kargs": {},
+            "dim": [
+                1,
+                1
+            ]
+        },
+        {
+            "node_type": "ScalarMultiply",
+            "name": "Model/ScalarMultiply:13",
+            "parents": [
+                "Model/Variable:12",
+                "Model/Variable:1"
+            ],
+            "childrens": [
+                "Model/Add:14"
+            ],
+            "kargs": {},
+            "dim": [
+                28,
+                28
+            ]
+        },
+        {
+            "node_type": "Add",
+            "name": "Model/Add:14",
+            "parents": [
+                "Model/Add:11",
+                "Model/ScalarMultiply:13"
+            ],
+            "childrens": [
+                "Model/ReLU:15"
+            ],
+            "kargs": {},
+            "dim": [
+                28,
+                28
+            ]
+        },
+        {
+            "node_type": "ReLU",
+            "name": "Model/ReLU:15",
+            "parents": [
+                "Model/Add:14"
+            ],
+            "childrens": [
+                "Model/MaxPooling:24"
+            ],
+            "kargs": {},
+            "dim": [
+                28,
+                28
+            ]
+        },
+        {
+            "node_type": "Variable",
+            "name": "Model/Variable:16",
+            "parents": [],
+            "childrens": [
+                "Model/Convolve:17"
+            ],
+            "kargs": {},
+            "dim": [
+                5,
+                5
+            ]
+        },
+        {
+            "node_type": "Convolve",
+            "name": "Model/Convolve:17",
+            "parents": [
+                "Input/Variable:0",
+                "Model/Variable:16"
+            ],
+            "childrens": [
+                "Model/Add:18"
+            ],
+            "kargs": {
+                "padding": "same"
+            },
+            "dim": [
+                28,
+                28
+            ]
+        },
+        {
+            "node_type": "Add",
+            "name": "Model/Add:18",
+            "parents": [
+                "Model/Convolve:17"
+            ],
+            "childrens": [
+                "Model/Add:21"
+            ],
+            "kargs": {},
+            "dim": [
+                28,
+                28
+            ]
+        },
+        {
+            "node_type": "Variable",
+            "name": "Model/Variable:19",
+            "parents": [],
+            "childrens": [
+                "Model/ScalarMultiply:20"
+            ],
+            "kargs": {},
+            "dim": [
+                1,
+                1
+            ]
+        },
+        {
+            "node_type": "ScalarMultiply",
+            "name": "Model/ScalarMultiply:20",
+            "parents": [
+                "Model/Variable:19",
+                "Model/Variable:1"
+            ],
+            "childrens": [
+                "Model/Add:21"
+            ],
+            "kargs": {},
+            "dim": [
+                28,
+                28
+            ]
+        },
+        {
+            "node_type": "Add",
+            "name": "Model/Add:21",
+            "parents": [
+                "Model/Add:18",
+                "Model/ScalarMultiply:20"
+            ],
+            "childrens": [
+                "Model/ReLU:22"
+            ],
+            "kargs": {},
+            "dim": [
+                28,
+                28
+            ]
+        },
+        {
+            "node_type": "ReLU",
+            "name": "Model/ReLU:22",
+            "parents": [
+                "Model/Add:21"
+            ],
+            "childrens": [
+                "Model/MaxPooling:25"
+            ],
+            "kargs": {},
+            "dim": [
+                28,
+                28
+            ]
+        },
+        {
+            "node_type": "MaxPooling",
+            "name": "Model/MaxPooling:23",
+            "parents": [
+                "Model/ReLU:8"
+            ],
+            "childrens": [
+                "Model/Convolve:28",
+                "Model/Convolve:39",
+                "Model/Convolve:50"
+            ],
+            "kargs": {
+                "size": [
+                    3,
+                    3
+                ],
+                "stride": [
+                    2,
+                    2
+                ]
+            },
+            "dim": [
+                14,
+                14
+            ]
+        },
+        {
+            "node_type": "MaxPooling",
+            "name": "Model/MaxPooling:24",
+            "parents": [
+                "Model/ReLU:15"
+            ],
+            "childrens": [
+                "Model/Convolve:30",
+                "Model/Convolve:41",
+                "Model/Convolve:52"
+            ],
+            "kargs": {
+                "size": [
+                    3,
+                    3
+                ],
+                "stride": [
+                    2,
+                    2
+                ]
+            },
+            "dim": [
+                14,
+                14
+            ]
+        },
+        {
+            "node_type": "MaxPooling",
+            "name": "Model/MaxPooling:25",
+            "parents": [
+                "Model/ReLU:22"
+            ],
+            "childrens": [
+                "Model/Convolve:32",
+                "Model/Convolve:43",
+                "Model/Convolve:54"
+            ],
+            "kargs": {
+                "size": [
+                    3,
+                    3
+                ],
+                "stride": [
+                    2,
+                    2
+                ]
+            },
+            "dim": [
+                14,
+                14
+            ]
+        },
+        {
+            "node_type": "Variable",
+            "name": "Model/Variable:26",
+            "parents": [],
+            "childrens": [
+                "Model/ScalarMultiply:35",
+                "Model/ScalarMultiply:46",
+                "Model/ScalarMultiply:57"
+            ],
+            "kargs": {},
+            "dim": [
+                14,
+                14
+            ]
+        },
+        {
+            "node_type": "Variable",
+            "name": "Model/Variable:27",
+            "parents": [],
+            "childrens": [
+                "Model/Convolve:28"
+            ],
+            "kargs": {},
+            "dim": [
+                3,
+                3
+            ]
+        },
+        {
+            "node_type": "Convolve",
+            "name": "Model/Convolve:28",
+            "parents": [
+                "Model/MaxPooling:23",
+                "Model/Variable:27"
+            ],
+            "childrens": [
+                "Model/Add:33"
+            ],
+            "kargs": {
+                "padding": "same"
+            },
+            "dim": [
+                14,
+                14
+            ]
+        },
+        {
+            "node_type": "Variable",
+            "name": "Model/Variable:29",
+            "parents": [],
+            "childrens": [
+                "Model/Convolve:30"
+            ],
+            "kargs": {},
+            "dim": [
+                3,
+                3
+            ]
+        },
+        {
+            "node_type": "Convolve",
+            "name": "Model/Convolve:30",
+            "parents": [
+                "Model/MaxPooling:24",
+                "Model/Variable:29"
+            ],
+            "childrens": [
+                "Model/Add:33"
+            ],
+            "kargs": {
+                "padding": "same"
+            },
+            "dim": [
+                14,
+                14
+            ]
+        },
+        {
+            "node_type": "Variable",
+            "name": "Model/Variable:31",
+            "parents": [],
+            "childrens": [
+                "Model/Convolve:32"
+            ],
+            "kargs": {},
+            "dim": [
+                3,
+                3
+            ]
+        },
+        {
+            "node_type": "Convolve",
+            "name": "Model/Convolve:32",
+            "parents": [
+                "Model/MaxPooling:25",
+                "Model/Variable:31"
+            ],
+            "childrens": [
+                "Model/Add:33"
+            ],
+            "kargs": {
+                "padding": "same"
+            },
+            "dim": [
+                14,
+                14
+            ]
+        },
+        {
+            "node_type": "Add",
+            "name": "Model/Add:33",
+            "parents": [
+                "Model/Convolve:28",
+                "Model/Convolve:30",
+                "Model/Convolve:32"
+            ],
+            "childrens": [
+                "Model/Add:36"
+            ],
+            "kargs": {},
+            "dim": [
+                14,
+                14
+            ]
+        },
+        {
+            "node_type": "Variable",
+            "name": "Model/Variable:34",
+            "parents": [],
+            "childrens": [
+                "Model/ScalarMultiply:35"
+            ],
+            "kargs": {},
+            "dim": [
+                1,
+                1
+            ]
+        },
+        {
+            "node_type": "ScalarMultiply",
+            "name": "Model/ScalarMultiply:35",
+            "parents": [
+                "Model/Variable:34",
+                "Model/Variable:26"
+            ],
+            "childrens": [
+                "Model/Add:36"
+            ],
+            "kargs": {},
+            "dim": [
+                14,
+                14
+            ]
+        },
+        {
+            "node_type": "Add",
+            "name": "Model/Add:36",
+            "parents": [
+                "Model/Add:33",
+                "Model/ScalarMultiply:35"
+            ],
+            "childrens": [
+                "Model/ReLU:37"
+            ],
+            "kargs": {},
+            "dim": [
+                14,
+                14
+            ]
+        },
+        {
+            "node_type": "ReLU",
+            "name": "Model/ReLU:37",
+            "parents": [
+                "Model/Add:36"
+            ],
+            "childrens": [
+                "Model/MaxPooling:60"
+            ],
+            "kargs": {},
+            "dim": [
+                14,
+                14
+            ]
+        },
+        {
+            "node_type": "Variable",
+            "name": "Model/Variable:38",
+            "parents": [],
+            "childrens": [
+                "Model/Convolve:39"
+            ],
+            "kargs": {},
+            "dim": [
+                3,
+                3
+            ]
+        },
+        {
+            "node_type": "Convolve",
+            "name": "Model/Convolve:39",
+            "parents": [
+                "Model/MaxPooling:23",
+                "Model/Variable:38"
+            ],
+            "childrens": [
+                "Model/Add:44"
+            ],
+            "kargs": {
+                "padding": "same"
+            },
+            "dim": [
+                14,
+                14
+            ]
+        },
+        {
+            "node_type": "Variable",
+            "name": "Model/Variable:40",
+            "parents": [],
+            "childrens": [
+                "Model/Convolve:41"
+            ],
+            "kargs": {},
+            "dim": [
+                3,
+                3
+            ]
+        },
+        {
+            "node_type": "Convolve",
+            "name": "Model/Convolve:41",
+            "parents": [
+                "Model/MaxPooling:24",
+                "Model/Variable:40"
+            ],
+            "childrens": [
+                "Model/Add:44"
+            ],
+            "kargs": {
+                "padding": "same"
+            },
+            "dim": [
+                14,
+                14
+            ]
+        },
+        {
+            "node_type": "Variable",
+            "name": "Model/Variable:42",
+            "parents": [],
+            "childrens": [
+                "Model/Convolve:43"
+            ],
+            "kargs": {},
+            "dim": [
+                3,
+                3
+            ]
+        },
+        {
+            "node_type": "Convolve",
+            "name": "Model/Convolve:43",
+            "parents": [
+                "Model/MaxPooling:25",
+                "Model/Variable:42"
+            ],
+            "childrens": [
+                "Model/Add:44"
+            ],
+            "kargs": {
+                "padding": "same"
+            },
+            "dim": [
+                14,
+                14
+            ]
+        },
+        {
+            "node_type": "Add",
+            "name": "Model/Add:44",
+            "parents": [
+                "Model/Convolve:39",
+                "Model/Convolve:41",
+                "Model/Convolve:43"
+            ],
+            "childrens": [
+                "Model/Add:47"
+            ],
+            "kargs": {},
+            "dim": [
+                14,
+                14
+            ]
+        },
+        {
+            "node_type": "Variable",
+            "name": "Model/Variable:45",
+            "parents": [],
+            "childrens": [
+                "Model/ScalarMultiply:46"
+            ],
+            "kargs": {},
+            "dim": [
+                1,
+                1
+            ]
+        },
+        {
+            "node_type": "ScalarMultiply",
+            "name": "Model/ScalarMultiply:46",
+            "parents": [
+                "Model/Variable:45",
+                "Model/Variable:26"
+            ],
+            "childrens": [
+                "Model/Add:47"
+            ],
+            "kargs": {},
+            "dim": [
+                14,
+                14
+            ]
+        },
+        {
+            "node_type": "Add",
+            "name": "Model/Add:47",
+            "parents": [
+                "Model/Add:44",
+                "Model/ScalarMultiply:46"
+            ],
+            "childrens": [
+                "Model/ReLU:48"
+            ],
+            "kargs": {},
+            "dim": [
+                14,
+                14
+            ]
+        },
+        {
+            "node_type": "ReLU",
+            "name": "Model/ReLU:48",
+            "parents": [
+                "Model/Add:47"
+            ],
+            "childrens": [
+                "Model/MaxPooling:61"
+            ],
+            "kargs": {},
+            "dim": [
+                14,
+                14
+            ]
+        },
+        {
+            "node_type": "Variable",
+            "name": "Model/Variable:49",
+            "parents": [],
+            "childrens": [
+                "Model/Convolve:50"
+            ],
+            "kargs": {},
+            "dim": [
+                3,
+                3
+            ]
+        },
+        {
+            "node_type": "Convolve",
+            "name": "Model/Convolve:50",
+            "parents": [
+                "Model/MaxPooling:23",
+                "Model/Variable:49"
+            ],
+            "childrens": [
+                "Model/Add:55"
+            ],
+            "kargs": {
+                "padding": "same"
+            },
+            "dim": [
+                14,
+                14
+            ]
+        },
+        {
+            "node_type": "Variable",
+            "name": "Model/Variable:51",
+            "parents": [],
+            "childrens": [
+                "Model/Convolve:52"
+            ],
+            "kargs": {},
+            "dim": [
+                3,
+                3
+            ]
+        },
+        {
+            "node_type": "Convolve",
+            "name": "Model/Convolve:52",
+            "parents": [
+                "Model/MaxPooling:24",
+                "Model/Variable:51"
+            ],
+            "childrens": [
+                "Model/Add:55"
+            ],
+            "kargs": {
+                "padding": "same"
+            },
+            "dim": [
+                14,
+                14
+            ]
+        },
+        {
+            "node_type": "Variable",
+            "name": "Model/Variable:53",
+            "parents": [],
+            "childrens": [
+                "Model/Convolve:54"
+            ],
+            "kargs": {},
+            "dim": [
+                3,
+                3
+            ]
+        },
+        {
+            "node_type": "Convolve",
+            "name": "Model/Convolve:54",
+            "parents": [
+                "Model/MaxPooling:25",
+                "Model/Variable:53"
+            ],
+            "childrens": [
+                "Model/Add:55"
+            ],
+            "kargs": {
+                "padding": "same"
+            },
+            "dim": [
+                14,
+                14
+            ]
+        },
+        {
+            "node_type": "Add",
+            "name": "Model/Add:55",
+            "parents": [
+                "Model/Convolve:50",
+                "Model/Convolve:52",
+                "Model/Convolve:54"
+            ],
+            "childrens": [
+                "Model/Add:58"
+            ],
+            "kargs": {},
+            "dim": [
+                14,
+                14
+            ]
+        },
+        {
+            "node_type": "Variable",
+            "name": "Model/Variable:56",
+            "parents": [],
+            "childrens": [
+                "Model/ScalarMultiply:57"
+            ],
+            "kargs": {},
+            "dim": [
+                1,
+                1
+            ]
+        },
+        {
+            "node_type": "ScalarMultiply",
+            "name": "Model/ScalarMultiply:57",
+            "parents": [
+                "Model/Variable:56",
+                "Model/Variable:26"
+            ],
+            "childrens": [
+                "Model/Add:58"
+            ],
+            "kargs": {},
+            "dim": [
+                14,
+                14
+            ]
+        },
+        {
+            "node_type": "Add",
+            "name": "Model/Add:58",
+            "parents": [
+                "Model/Add:55",
+                "Model/ScalarMultiply:57"
+            ],
+            "childrens": [
+                "Model/ReLU:59"
+            ],
+            "kargs": {},
+            "dim": [
+                14,
+                14
+            ]
+        },
+        {
+            "node_type": "ReLU",
+            "name": "Model/ReLU:59",
+            "parents": [
+                "Model/Add:58"
+            ],
+            "childrens": [
+                "Model/MaxPooling:62"
+            ],
+            "kargs": {},
+            "dim": [
+                14,
+                14
+            ]
+        },
+        {
+            "node_type": "MaxPooling",
+            "name": "Model/MaxPooling:60",
+            "parents": [
+                "Model/ReLU:37"
+            ],
+            "childrens": [
+                "Model/Concat:63"
+            ],
+            "kargs": {
+                "size": [
+                    3,
+                    3
+                ],
+                "stride": [
+                    2,
+                    2
+                ]
+            },
+            "dim": [
+                7,
+                7
+            ]
+        },
+        {
+            "node_type": "MaxPooling",
+            "name": "Model/MaxPooling:61",
+            "parents": [
+                "Model/ReLU:48"
+            ],
+            "childrens": [
+                "Model/Concat:63"
+            ],
+            "kargs": {
+                "size": [
+                    3,
+                    3
+                ],
+                "stride": [
+                    2,
+                    2
+                ]
+            },
+            "dim": [
+                7,
+                7
+            ]
+        },
+        {
+            "node_type": "MaxPooling",
+            "name": "Model/MaxPooling:62",
+            "parents": [
+                "Model/ReLU:59"
+            ],
+            "childrens": [
+                "Model/Concat:63"
+            ],
+            "kargs": {
+                "size": [
+                    3,
+                    3
+                ],
+                "stride": [
+                    2,
+                    2
+                ]
+            },
+            "dim": [
+                7,
+                7
+            ]
+        },
+        {
+            "node_type": "Concat",
+            "name": "Model/Concat:63",
+            "parents": [
+                "Model/MaxPooling:60",
+                "Model/MaxPooling:61",
+                "Model/MaxPooling:62"
+            ],
+            "childrens": [
+                "Model/MatMul:66"
+            ],
+            "kargs": {},
+            "dim": [
+                147,
+                1
+            ]
+        },
+        {
+            "node_type": "Variable",
+            "name": "Model/Variable:64",
+            "parents": [],
+            "childrens": [
+                "Model/MatMul:66"
+            ],
+            "kargs": {},
+            "dim": [
+                120,
+                147
+            ]
+        },
+        {
+            "node_type": "Variable",
+            "name": "Model/Variable:65",
+            "parents": [],
+            "childrens": [
+                "Model/Add:67"
+            ],
+            "kargs": {},
+            "dim": [
+                120,
+                1
+            ]
+        },
+        {
+            "node_type": "MatMul",
+            "name": "Model/MatMul:66",
+            "parents": [
+                "Model/Variable:64",
+                "Model/Concat:63"
+            ],
+            "childrens": [
+                "Model/Add:67"
+            ],
+            "kargs": {},
+            "dim": [
+                120,
+                1
+            ]
+        },
+        {
+            "node_type": "Add",
+            "name": "Model/Add:67",
+            "parents": [
+                "Model/MatMul:66",
+                "Model/Variable:65"
+            ],
+            "childrens": [
+                "Model/ReLU:68"
+            ],
+            "kargs": {},
+            "dim": [
+                120,
+                1
+            ]
+        },
+        {
+            "node_type": "ReLU",
+            "name": "Model/ReLU:68",
+            "parents": [
+                "Model/Add:67"
+            ],
+            "childrens": [
+                "Model/MatMul:71"
+            ],
+            "kargs": {},
+            "dim": [
+                120,
+                1
+            ]
+        },
+        {
+            "node_type": "Variable",
+            "name": "Model/Variable:69",
+            "parents": [],
+            "childrens": [
+                "Model/MatMul:71"
+            ],
+            "kargs": {},
+            "dim": [
+                10,
+                120
+            ]
+        },
+        {
+            "node_type": "Variable",
+            "name": "Model/Variable:70",
+            "parents": [],
+            "childrens": [
+                "Model/Add:72"
+            ],
+            "kargs": {},
+            "dim": [
+                10,
+                1
+            ]
+        },
+        {
+            "node_type": "MatMul",
+            "name": "Model/MatMul:71",
+            "parents": [
+                "Model/Variable:69",
+                "Model/ReLU:68"
+            ],
+            "childrens": [
+                "Model/Add:72"
+            ],
+            "kargs": {},
+            "dim": [
+                10,
+                1
+            ]
+        },
+        {
+            "node_type": "Add",
+            "name": "Model/Add:72",
+            "parents": [
+                "Model/MatMul:71",
+                "Model/Variable:70"
+            ],
+            "childrens": [
+                "SoftMax/SoftMax:73",
+                "CrossEntropyWithSoftMax:75"
+            ],
+            "kargs": {},
+            "dim": [
+                10,
+                1
+            ]
+        },
+        {
+            "node_type": "SoftMax",
+            "name": "SoftMax/SoftMax:73",
+            "parents": [
+                "Model/Add:72"
+            ],
+            "childrens": [
+                "Accuracy:76",
+                "Precision:77",
+                "Recall:78"
+            ],
+            "kargs": {},
+            "dim": [
+                10,
+                1
+            ]
+        },
+        {
+            "node_type": "Variable",
+            "name": "Variable:74",
+            "parents": [],
+            "childrens": [
+                "CrossEntropyWithSoftMax:75",
+                "Accuracy:76",
+                "Precision:77",
+                "Recall:78"
+            ],
+            "kargs": {},
+            "dim": [
+                10,
+                1
+            ]
+        },
+        {
+            "node_type": "CrossEntropyWithSoftMax",
+            "name": "CrossEntropyWithSoftMax:75",
+            "parents": [
+                "Model/Add:72",
+                "Variable:74"
+            ],
+            "childrens": [],
+            "kargs": {}
+        },
+        {
+            "node_type": "Accuracy",
+            "name": "Accuracy:76",
+            "parents": [
+                "SoftMax/SoftMax:73",
+                "Variable:74"
+            ],
+            "childrens": [],
+            "kargs": {
+                "saved": true
+            }
+        },
+        {
+            "node_type": "Precision",
+            "name": "Precision:77",
+            "parents": [
+                "SoftMax/SoftMax:73",
+                "Variable:74"
+            ],
+            "childrens": [],
+            "kargs": {
+                "saved": true
+            }
+        },
+        {
+            "node_type": "Recall",
+            "name": "Recall:78",
+            "parents": [
+                "SoftMax/SoftMax:73",
+                "Variable:74"
+            ],
+            "childrens": [],
+            "kargs": {
+                "saved": true
+            }
+        }
+    ]
+}

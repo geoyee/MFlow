@@ -25,8 +25,8 @@ def fillDiag(to_be_filled: np.matrix, filler: np.matrix) -> np.matrix:
 
 
 class Add(Operator):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(Add, self).__init__(*parents, **kwargs)
+    def __init__(self, *parents: Any, **kargs: Any) -> None:
+        super(Add, self).__init__(*parents, **kargs)
 
     def calcValue(self) -> None:
         self.value = np.mat(np.zeros(self.nparents[0].shape))
@@ -39,8 +39,8 @@ class Add(Operator):
 
 # 矩阵乘法
 class MatMul(Operator):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(MatMul, self).__init__(*parents, **kwargs)
+    def __init__(self, *parents: Any, **kargs: Any) -> None:
+        super(MatMul, self).__init__(*parents, **kargs)
 
     def calcValue(self) -> None:
         assert (
@@ -62,8 +62,8 @@ class MatMul(Operator):
 
 # 对应位置的元素相乘
 class Multiply(Operator):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(Multiply, self).__init__(*parents, **kwargs)
+    def __init__(self, *parents: Any, **kargs: Any) -> None:
+        super(Multiply, self).__init__(*parents, **kargs)
 
     def calcValue(self) -> None:
         self.value = np.multiply(self.nparents[0].value, self.nparents[1].value).astype(
@@ -78,8 +78,8 @@ class Multiply(Operator):
 
 
 class ScalarMultiply(Operator):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(ScalarMultiply, self).__init__(*parents, **kwargs)
+    def __init__(self, *parents: Any, **kargs: Any) -> None:
+        super(ScalarMultiply, self).__init__(*parents, **kargs)
 
     def calcValue(self) -> None:
         assert self.nparents[0].shape == (1, 1)  # 第一个父节点是标量
@@ -94,10 +94,10 @@ class ScalarMultiply(Operator):
 
 
 class Reshape(Operator):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(Reshape, self).__init__(*parents, **kwargs)
-        self.new_shape = kwargs.get("shape")
-        assert isinstance(self.new_shape, tuple) and len(self.new_shape) == 2
+    def __init__(self, *parents: Any, **kargs: Any) -> None:
+        super(Reshape, self).__init__(*parents, **kargs)
+        self.new_shape = tuple(kargs.get("shape"))
+        assert len(self.new_shape) == 2
 
     def calcValue(self) -> None:
         self.value = self.nparents[0].value.reshape(self.new_shape)
@@ -108,9 +108,9 @@ class Reshape(Operator):
 
 
 class Concat(Operator):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(Concat, self).__init__(*parents, **kwargs)
-        self.axis = kwargs.get("axis", 1)
+    def __init__(self, *parents: Any, **kargs: Any) -> None:
+        super(Concat, self).__init__(*parents, **kargs)
+        self.axis = kargs.get("axis", 1)
 
     def calcValue(self) -> None:
         self.value = np.concatenate(
@@ -131,8 +131,8 @@ class Concat(Operator):
 
 # 焊接
 class Welding(Operator):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(Welding, self).__init__(*parents, **kwargs)
+    def __init__(self, *parents: Any, **kargs: Any) -> None:
+        super(Welding, self).__init__(*parents, **kargs)
 
     def calcValue(self) -> None:
         assert len(self.nparents) == 1 and self.nparents[0] is not None
@@ -154,10 +154,13 @@ class Welding(Operator):
 
 # 卷积
 class Convolve(Operator):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(Convolve, self).__init__(*parents, **kwargs)
+    def __init__(self, *parents: Any, **kargs: Any) -> None:
+        super(Convolve, self).__init__(*parents, **kargs)
         assert len(self.nparents) == 2  # 图像与卷积核
         self.padded = None
+        self.padding = kargs.get("padding", "valid")
+        if self.padding != "valid":
+            self.padding = "same"
 
     def calcValue(self) -> None:
         data = self.nparents[0].value
@@ -165,16 +168,31 @@ class Convolve(Operator):
         self.w, self.h = data.shape
         self.kw, self.kh = kernel.shape
         self.hkw, self.hkh = int(self.kw / 2), int(self.kh / 2)
-        self.pw, self.ph = tuple(
-            np.add(data.shape, np.multiply((self.hkw, self.hkh), 2))
-        )
-        # 数据补充
-        self.padded = np.mat(np.zeros((self.pw, self.ph)))
-        self.padded[self.hkw : self.hkw + self.w, self.hkh : self.hkh + self.h] = data
+        if self.padding == "same":
+            self.pw, self.ph = tuple(
+                np.add(data.shape, np.multiply((self.hkw, self.hkh), 2))
+            )
+            # 数据补充
+            self.padded = np.mat(np.zeros((self.pw, self.ph)))
+            self.padded[
+                self.hkw : self.hkw + self.w, self.hkh : self.hkh + self.h
+            ] = data
+            # 结果
+            self.value = np.mat(np.zeros((self.w, self.h))).astype("float32")
+            # 范围
+            self.i_range = np.arange(self.hkw, self.w + self.hkw)
+            self.j_range = np.arange(self.hkh, self.h + self.hkh)
+        else:  # self.padding == "valid"
+            self.pw, self.ph = data.shape
+            self.padded = data
+            self.value = np.mat(
+                np.zeros((self.w - 2 * self.hkw, self.h - 2 * self.hkh))
+            ).astype("float32")
+            self.i_range = np.arange(self.hkw, self.w - self.hkw)
+            self.j_range = np.arange(self.hkh, self.h - self.hkh)
         # 开始卷积
-        self.value = np.mat(np.zeros((self.w, self.h))).astype("float32")
-        for i in np.arange(self.hkw, self.hkw + self.w):
-            for j in np.arange(self.hkh, self.hkh + self.h):
+        for i in self.i_range:
+            for j in self.j_range:
                 self.value[i - self.hkw, j - self.hkh] = np.sum(
                     np.multiply(
                         self.padded[
@@ -189,21 +207,30 @@ class Convolve(Operator):
         kernel = self.nparents[1].value
         jacobi = []
         if parent is self.nparents[0]:  # 图像
-            for i in np.arange(self.hkw, self.hkw + self.w):
-                for j in np.arange(self.hkh, self.hkh + self.h):
+            for i in self.i_range:
+                for j in self.j_range:
                     mask = np.mat(np.zeros((self.pw, self.ph)))
                     mask[
                         i - self.hkw : i - self.hkw + self.kw,
                         j - self.hkh : j - self.hkh + self.kh,
                     ] = kernel
-                    jacobi.append(
-                        mask[
-                            self.hkw : self.hkw + self.w, self.hkh : self.hkh + self.h
-                        ].A1
-                    )
+                    if self.padding == "same":
+                        jacobi.append(
+                            mask[
+                                self.hkw : self.w + self.hkw,
+                                self.hkh : self.h + self.hkh,
+                            ].A1
+                        )
+                    else:  # self.padding == "valid"
+                        jacobi.append(
+                            mask[
+                                self.hkw : self.w - self.hkw,
+                                self.hkh : self.h - self.hkh,
+                            ].A1
+                        )
         elif parent is self.nparents[1]:  # 卷积核
-            for i in np.arange(self.hkw, self.hkw + self.w):
-                for j in np.arange(self.hkh, self.hkh + self.h):
+            for i in self.i_range:
+                for j in self.j_range:
                     jacobi.append(
                         self.padded[
                             i - self.hkw : i - self.hkw + self.kw,
@@ -216,12 +243,12 @@ class Convolve(Operator):
 
 
 class MaxPooling(Operator):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(MaxPooling, self).__init__(*parents, **kwargs)
-        self.stride = kwargs.get("stride")
-        assert isinstance(self.stride, tuple) and len(self.stride) == 2
-        self.size = kwargs.get("size")
-        assert isinstance(self.size, tuple) and len(self.size) == 2
+    def __init__(self, *parents: Any, **kargs: Any) -> None:
+        super(MaxPooling, self).__init__(*parents, **kargs)
+        self.stride = tuple(kargs.get("stride"))
+        assert len(self.stride) == 2
+        self.size = tuple(kargs.get("size"))
+        assert len(self.size) == 2
         self.flag = None
 
     def calcValue(self) -> None:
@@ -259,12 +286,12 @@ class MaxPooling(Operator):
 
 
 class AvePooling(Operator):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(AvePooling, self).__init__(*parents, **kwargs)
-        self.stride = kwargs.get("stride")
-        assert isinstance(self.stride, tuple) and len(self.stride) == 2
-        self.size = kwargs.get("size")
-        assert isinstance(self.size, tuple) and len(self.size) == 2
+    def __init__(self, *parents: Any, **kargs: Any) -> None:
+        super(AvePooling, self).__init__(*parents, **kargs)
+        self.stride = tuple(kargs.get("stride"))
+        assert len(self.stride) == 2
+        self.size = tuple(kargs.get("size"))
+        assert len(self.size) == 2
         self.flag = None
 
     def calcValue(self) -> None:

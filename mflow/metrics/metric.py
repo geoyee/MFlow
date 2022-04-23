@@ -5,8 +5,8 @@ from typing import Any
 
 # 正确率
 class Accuracy(Metric):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(Accuracy, self).__init__(*parents, **kwargs)
+    def __init__(self, *parents: Any, **kargs: Any) -> None:
+        super(Accuracy, self).__init__(*parents, **kargs)
 
     def init(self) -> None:
         self.correct_num = 0
@@ -27,8 +27,8 @@ class Accuracy(Metric):
 
 # 准确率
 class Precision(Metric):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(Precision, self).__init__(*parents, **kwargs)
+    def __init__(self, *parents: Any, **kargs: Any) -> None:
+        super(Precision, self).__init__(*parents, **kargs)
 
     def init(self) -> None:
         self.true_pos_nom = 0
@@ -41,7 +41,7 @@ class Precision(Metric):
         # 预测为1的样本数
         self.pred_pos_num += np.sum(pred == 1)
         # 预测为1且正确
-        self.true_pos_nom += np.sum(pred == gt and pred == 1)
+        self.true_pos_nom += np.sum((pred == gt) & (pred == 1))
         self.value = 0
         if self.pred_pos_num != 0:
             self.value = float(self.true_pos_nom) / self.pred_pos_num
@@ -49,8 +49,8 @@ class Precision(Metric):
 
 # 召回率
 class Recall(Metric):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(Recall, self).__init__(*parents, **kwargs)
+    def __init__(self, *parents: Any, **kargs: Any) -> None:
+        super(Recall, self).__init__(*parents, **kargs)
 
     def init(self) -> None:
         self.gt_pos_nom = 0
@@ -63,15 +63,15 @@ class Recall(Metric):
         # 标签为1的样本数
         self.gt_pos_nom += np.sum(gt == 1)
         # 预测为1且正确
-        self.true_pos_nom += np.sum(pred == gt and pred == 1)
+        self.true_pos_nom += np.sum((pred == gt) & (pred == 1))
         self.value = 0
         if self.gt_pos_nom != 0:
             self.value = float(self.true_pos_nom) / self.gt_pos_nom
 
 
 class ROC(Metric):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(ROC, self).__init__(*parents, **kwargs)
+    def __init__(self, *parents: Any, **kargs: Any) -> None:
+        super(ROC, self).__init__(*parents, **kargs)
 
     def init(self) -> None:
         self.count = 100
@@ -93,8 +93,8 @@ class ROC(Metric):
         # 分别使用多个阈值产生的预测与标签比较
         for idx, threshold in enumerate(thresholds):
             pred = Metric.prob2Label(prob, threshold)
-            self.true_pos_num[idx] += np.sum(pred == gt and pred == 1)
-            self.false_pos_num[idx] += np.sum(pred != gt and pred == 1)
+            self.true_pos_num[idx] += np.sum((pred == gt) & (pred == 1))
+            self.false_pos_num[idx] += np.sum((pred != gt) & (pred == 1))
         # 分别计算TPR和FPR
         if self.gt_pos_num != 0 and self.gt_neg_num != 0:
             self.tpr = self.true_pos_num / self.gt_pos_num
@@ -107,8 +107,8 @@ class ROC(Metric):
 
 
 class ROC_AUC(Metric):
-    def __init__(self, *parents: Any, **kwargs: Any) -> None:
-        super(ROC_AUC, self).__init__(*parents, **kwargs)
+    def __init__(self, *parents: Any, **kargs: Any) -> None:
+        super(ROC_AUC, self).__init__(*parents, **kargs)
 
     def init(self) -> None:
         self.gt_pos_preds = []
