@@ -27,6 +27,7 @@ class Accuracy(Metric):
 
 
 # 准确率
+# TODO: 多分类
 class Precision(Metric):
     def __init__(self, *parents: Any, **kargs: Any) -> None:
         super(Precision, self).__init__(*parents, **kargs)
@@ -50,6 +51,7 @@ class Precision(Metric):
 
 
 # 召回率
+# TODO: 多分类
 class Recall(Metric):
     def __init__(self, *parents: Any, **kargs: Any) -> None:
         super(Recall, self).__init__(*parents, **kargs)
@@ -72,6 +74,7 @@ class Recall(Metric):
         self.value = np.matrix(value)
 
 
+# TODO: 多分类
 class ROC(Metric):
     def __init__(self, *parents: Any, **kargs: Any) -> None:
         super(ROC, self).__init__(*parents, **kargs)
