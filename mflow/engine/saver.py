@@ -6,7 +6,7 @@ import numpy as np
 from ..core import Node, Variable, Graph, DefaultGraph, getNodeByName
 from ..metrics import Metric
 from ..utils import ClassMining
-from typing import Dict, Union
+from typing import List, Dict, Optional, Any, Tuple
 
 
 class Saver(object):
@@ -17,17 +17,17 @@ class Saver(object):
 
     def save(
         self,
-        name: Union[str, None] = None,
-        graph: Union[Graph, None] = None,
-        meta: Union[Dict, None] = None,
-        service: Union[Dict, None] = None,
+        name: Optional[str] = None,
+        graph: Optional[Graph] = None,
+        meta: Optional[Dict] = None,
+        service: Optional[Dict] = None,
     ) -> None:
         if graph is None:
             graph = DefaultGraph
         else:
             name = graph.name_scope if graph.name_scope is not None else name
-            if name is None:
-                name = "output"
+        if name is None:
+            name = "output"
         # 元信息，如时间之类的信息
         meta = {} if meta is None else meta
         meta["save_time"] = str(datetime.datetime.now())
@@ -36,12 +36,12 @@ class Saver(object):
         service = {} if service is None else service
         self._saveModelAndWeight(name, graph, meta, service)
 
-    def load(self, name: str, graph: Union[Graph, None] = None) -> Dict:
+    def load(self, name: str, graph: Optional[Graph] = None) -> Tuple:
         if graph is None:
             graph = DefaultGraph
-        model_json = {}
-        graph_json = []
-        weights_dict = dict()
+        model_json: Dict[str, Any] = {}
+        graph_json: List[Dict] = []
+        weights_dict = {}
         # 读取计算图结构
         model_file_path = os.path.join(self.root_dir, (name + ".json"))
         with open(model_file_path, "r") as model_file:
@@ -64,9 +64,9 @@ class Saver(object):
     def _saveModelAndWeight(
         self, name: str, graph: Graph, meta: Dict, service: Dict
     ) -> None:
-        model_json = {"meta": meta, "service": service}
-        graph_json = []
-        weights_dict = dict()
+        model_json: Dict[str, Any] = {"meta": meta, "service": service}
+        graph_json: List[Dict] = []
+        weights_dict: Dict[str, np.matrix] = {}
         # 把节点保存为dict/json格式
         for node in graph.nodes:
             if not node.saved:
@@ -99,7 +99,7 @@ class Saver(object):
             np.savez(weights_file, **weights_dict)
             print("Save weights to file: {}.".format(weights_file.name))
 
-    def _restoreNodes(self, graph: Graph, model_json: Dict, weights_dict: Dict) -> None:
+    def _restoreNodes(self, graph: Graph, model_json: List, weights_dict: Dict) -> None:
         for idx in range(len(model_json)):
             node_json = model_json[idx]
             node_name = node_json["name"]
@@ -118,7 +118,7 @@ class Saver(object):
             target_node.value = weights
 
     @staticmethod
-    def createNode(graph: Graph, model_json: Dict, node_json: Dict) -> None:
+    def createNode(graph: Graph, model_json: List, node_json: Dict) -> Node:
         # 递归创建不存在的节点
         node_type = node_json["node_type"]
         node_name = node_json["name"]

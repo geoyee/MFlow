@@ -1,4 +1,5 @@
 import numpy as np
+from typing import Dict
 from .base import Optimizer
 from ..core import Graph, Node, getTrainabledNode
 
@@ -21,7 +22,7 @@ class Momentum(Optimizer):
     ) -> None:
         super(Momentum, self).__init__(graph, target, lr)
         self.momentum = momentum
-        self.hist_v = {}  # 累计历史速度
+        self.hist_v: Dict[Node, np.matrix] = {}  # 累计历史速度
 
     def _update(self) -> None:
         var_nodes = getTrainabledNode(self.graph)
@@ -40,7 +41,7 @@ class Momentum(Optimizer):
 class AdaGrad(Optimizer):
     def __init__(self, graph: Graph, target: Node, lr: float = 0.01) -> None:
         super(AdaGrad, self).__init__(graph, target, lr)
-        self.hist_s = {}
+        self.hist_s: Dict[Node, np.matrix] = {}
 
     def _update(self) -> None:
         var_nodes = getTrainabledNode(self.graph)
@@ -63,7 +64,7 @@ class RMSProp(Optimizer):
     ) -> None:
         super(RMSProp, self).__init__(graph, target, lr)
         self.beta = beta
-        self.hist_s = {}
+        self.hist_s: Dict[Node, np.matrix] = {}
 
     def _update(self) -> None:
         var_nodes = getTrainabledNode(self.graph)
@@ -94,8 +95,8 @@ class Adam(Optimizer):
         super(Adam, self).__init__(graph, target, lr)
         self.beta_1 = beta_1
         self.beta_2 = beta_2
-        self.hist_v = {}
-        self.hist_s = {}
+        self.hist_v: Dict[Node, np.matrix] = {}
+        self.hist_s: Dict[Node, np.matrix] = {}
 
     def _update(self) -> None:
         var_nodes = getTrainabledNode(self.graph)

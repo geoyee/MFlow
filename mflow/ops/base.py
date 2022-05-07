@@ -5,7 +5,9 @@ from ..core import Node
 
 # 求e的x次方
 def _ePower(x, trunc=1e2):
-    x[x > trunc] = trunc  # 数值截断，防止溢出
+    # 数值截断，防止溢出
+    x[x > trunc] = trunc
+    x[x < -trunc] = -trunc
     return np.power(np.e, x).astype("float32")
 
 

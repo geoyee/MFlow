@@ -1,14 +1,15 @@
 import numpy as np
-from typing import Union, Any, List
+from typing import Optional, Any, List
 from .node import Variable, Node
-from .graph import DefaultGraph, Graph
+from .graph import Graph
+from . import DefaultGraph
 
 
 def getNodeByName(
     node_name: str,
-    name_scope: Union[None, str] = None,
-    graph: Union[None, Graph] = None,
-) -> Union[None, Node]:
+    name_scope: Optional[str] = None,
+    graph: Optional[Graph] = None,
+) -> Optional[Node]:
     graph = DefaultGraph if graph is None else graph
     node_name = (name_scope + "/" + node_name) if name_scope else node_name
     for node in graph.nodes:
@@ -17,7 +18,7 @@ def getNodeByName(
     return None
 
 
-def getTrainabledNode(graph: Union[None, Graph] = None) -> List:
+def getTrainabledNode(graph: Optional[Graph] = None) -> List:
     graph = DefaultGraph if graph is None else graph
     return [
         node for node in graph.nodes if isinstance(node, Variable) and node.trainable
@@ -27,8 +28,8 @@ def getTrainabledNode(graph: Union[None, Graph] = None) -> List:
 def updateNodeValue(
     node_name: str,
     value: np.matrix,
-    name_scope: Union[None, str] = None,
-    graph: Union[None, Graph] = None,
+    name_scope: Optional[str] = None,
+    graph: Optional[Graph] = None,
 ) -> None:
     node = getNodeByName(node_name, name_scope, graph)
     if node is not None and node.value != value:

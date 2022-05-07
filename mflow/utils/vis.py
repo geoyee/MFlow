@@ -1,11 +1,10 @@
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
-from typing import List
-from ..core import Graph
+from ..core import Graph, Variable
 
 
-def drawXYDatas(datas: List, labs: List) -> None:
+def drawXYDatas(datas: np.ndarray, labs: np.ndarray) -> None:
     pxs = datas[:, 0]
     pys = datas[:, 1]
     plt.figure(figsize=(8, 8))
@@ -21,7 +20,7 @@ def drawGraph(graph: Graph) -> None:
         G.add_node(node)
         labels[node] = (
             node.__class__.__name__
-            + ("({:s})".format(str(node.size)) if hasattr(node, "dim") else "")
+            + ("({:s})".format(str(node.size)) if isinstance(node, Variable) else "")
             + (
                 "\n[{:.3f}]".format(np.linalg.norm(node.jacobi))
                 if node.jacobi is not None

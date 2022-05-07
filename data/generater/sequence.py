@@ -20,7 +20,7 @@ def waveData(
             sequence = data + np.random.normal(0, 0.6, (len(data), dim))
             label = np.array([int(i == k) for k in range(2)])
             datas.append(np.c_[sequence.reshape(1, -1), label.reshape(1, -1)])
-    datas = np.concatenate(datas, axis=0)
+    nd_datas = np.concatenate(datas, axis=0)
     if shuffle:
-        np.random.shuffle(datas)
-    return datas[:, :-2].reshape(-1, lenght, dim), datas[:, -2:]
+        np.random.shuffle(nd_datas)
+    return nd_datas[:, :-2].reshape(-1, lenght, dim), nd_datas[:, -2:]

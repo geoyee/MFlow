@@ -1,6 +1,6 @@
 import numpy as np
 from .base import Metric
-from typing import Any
+from typing import Any, List
 
 
 # 正确率
@@ -20,9 +20,10 @@ class Accuracy(Metric):
         self.correct_num += np.sum(pred == gt)
         # 样本总数
         self.total_num += len(pred)
-        self.value = 0
+        value = 0.0
         if self.total_num != 0:
-            self.value = float(self.correct_num) / self.total_num
+            value = float(self.correct_num) / self.total_num
+        self.value = np.matrix(value)
 
 
 # 准确率
@@ -42,9 +43,10 @@ class Precision(Metric):
         self.pred_pos_num += np.sum(pred == 1)
         # 预测为1且正确
         self.true_pos_nom += np.sum((pred == gt) & (pred == 1))
-        self.value = 0
+        value = 0.0
         if self.pred_pos_num != 0:
-            self.value = float(self.true_pos_nom) / self.pred_pos_num
+            value = float(self.true_pos_nom) / self.pred_pos_num
+        self.value = np.matrix(value)
 
 
 # 召回率
@@ -64,9 +66,10 @@ class Recall(Metric):
         self.gt_pos_nom += np.sum(gt == 1)
         # 预测为1且正确
         self.true_pos_nom += np.sum((pred == gt) & (pred == 1))
-        self.value = 0
+        value = 0.0
         if self.gt_pos_nom != 0:
-            self.value = float(self.true_pos_nom) / self.gt_pos_nom
+            value = float(self.true_pos_nom) / self.gt_pos_nom
+        self.value = np.matrix(value)
 
 
 class ROC(Metric):
@@ -77,8 +80,8 @@ class ROC(Metric):
         self.count = 100
         self.gt_pos_num = 0
         self.gt_neg_num = 0
-        self.true_pos_num = 0
-        self.false_pos_num = 0
+        self.true_pos_num = np.array([0] * self.count)
+        self.false_pos_num = np.array([0] * self.count)
         self.tpr = np.array([0] * self.count)
         self.fpr = np.array([0] * self.count)
 
@@ -101,8 +104,8 @@ class ROC(Metric):
             self.fpr = self.false_pos_num / self.gt_neg_num
 
     def valueStr(self) -> str:
-        return "{}: [TPR: {}, FPR: {}]}".format(
-            self.__class__.__name__, self.tpr, self.fpr
+        return "{}: [TPR: {}, FPR: {}]".format(
+            self.__class__.__name__, self.tpr.tolist(), self.fpr.tolist()
         )
 
 
@@ -111,8 +114,8 @@ class ROC_AUC(Metric):
         super(ROC_AUC, self).__init__(*parents, **kargs)
 
     def init(self) -> None:
-        self.gt_pos_preds = []
-        self.gt_neg_preds = []
+        self.gt_pos_preds: List[np.matrix] = []
+        self.gt_neg_preds: List[np.matrix] = []
 
     def calcValue(self) -> None:
         # 第一个节点是预测值，第二个节点是标签
@@ -128,4 +131,4 @@ class ROC_AUC(Metric):
             for gt_pos_pred in self.gt_pos_preds:
                 if gt_pos_pred > gt_neg_pred:
                     count += 1
-        self.value = float(count) / total
+        self.value = np.matrix(float(count) / total)

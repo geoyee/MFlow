@@ -1,11 +1,11 @@
 from ..core import NameScope, Variable
 from ..ops import Concat, SoftMax
 from ..lays import Conv, Pooling, Linear
-from typing import Dict
+from typing import Tuple
 
 
 # 太慢的跑起来
-def LeNet() -> Dict:
+def LeNet() -> Tuple:
     """Lenet的keras实现"""
     with NameScope("Input"):
         x = Variable(size=(28, 28), trainable=False)
@@ -22,7 +22,7 @@ def LeNet() -> Dict:
 
 
 # FOR TEST
-def MnistNet() -> Dict:
+def MnistNet() -> Tuple:
     with NameScope("Input"):
         x = Variable(size=(28, 28), trainable=False)
     with NameScope("Model"):

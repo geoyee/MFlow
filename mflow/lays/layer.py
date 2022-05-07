@@ -1,11 +1,11 @@
-from typing import List, Tuple, Union
+from typing import List, Tuple, Optional
 from ..core import Variable, Node
 from ..ops import *
 
 
 # 全连接层
 def Linear(
-    input: Node, input_size: int, size: int, act: Union[str, None] = "ReLU"
+    input: Node, input_size: int, size: int, act: Optional[str] = "ReLU"
 ) -> Operator:
     weight = Variable((size, input_size), trainable=True)
     bias = Variable((size, 1), trainable=True)
@@ -26,7 +26,7 @@ def Conv(
     input_shape: Tuple,
     kernels: int,
     kernel_shape: Tuple,
-    act: Union[str, None] = "ReLU",
+    act: Optional[str] = "ReLU",
     padding: str = "same",
 ) -> List:
     if padding == "same":
@@ -39,15 +39,15 @@ def Conv(
         )
         ones = Variable(bias_shape, trainable=False)
         ones.setValue(np.mat(np.ones(bias_shape)))
-    outputs = []
+    outputs: List[Operator] = []
     for _ in range(kernels):
-        channels = []
+        channels: List[Operator] = []
         for fm in feat_maps:
             kernel = Variable(kernel_shape, trainable=True)
             channels.append(Convolve(fm, kernel, padding=padding))
-        channels = Add(*channels)
+        channel_add = Add(*channels)
         bias = ScalarMultiply(Variable(size=(1, 1), trainable=True), ones)
-        affine = Add(channels, bias)
+        affine = Add(channel_add, bias)
         if act == "ReLU":
             outputs.append(ReLU(affine))
         elif act == "Logistic":

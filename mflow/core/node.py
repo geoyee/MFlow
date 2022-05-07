@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Tuple, Any
+from typing import Tuple, List, Any, Optional
 from .graph import DefaultGraph
 
 
@@ -10,21 +10,27 @@ class Node(object):
         self.graph = kargs.get("graph", DefaultGraph)
         self.saved = kargs.get("saved", True)
         self._setName(**kargs)
-        self.value = None
-        self.jacobi = None
-        self.nchildrens = []
+        self.value: Optional[np.matrix] = None
+        self.jacobi: Optional[np.matrix] = None
+        self.nchildrens: List["Node"] = []
         self.nparents = list(parents)
         for parent in self.nparents:
             parent.nchildrens.append(self)
         self.graph.addNode(self)
 
     @property
-    def dim(self) -> int:
-        return self.value.shape[0] * self.value.shape[1]
+    def dim(self) -> Optional[int]:
+        if self.value is not None:
+            return self.value.shape[0] * self.value.shape[1]
+        else:
+            return None
 
     @property
-    def shape(self) -> Tuple:
-        return self.value.shape
+    def shape(self) -> Optional[Tuple]:
+        if self.value is not None:
+            return self.value.shape
+        else:
+            return None
 
     def _setName(self, **kargs: Any) -> None:
         self.name = kargs.get(
@@ -48,7 +54,7 @@ class Node(object):
             for child in self.nchildrens:
                 child.resetValue()
 
-    def backward(self, result: Any) -> np.matrix:
+    def backward(self, result: "Node") -> np.matrix:
         if self.jacobi is None:
             if self is result:
                 self.jacobi = np.mat(np.eye(self.dim))
@@ -59,7 +65,7 @@ class Node(object):
                         self.jacobi += child.backward(result) * child.calcJacobi(self)
         return self.jacobi
 
-    def calcJacobi(self, parent: Any) -> np.matrix:
+    def calcJacobi(self, parent: "Node") -> np.matrix:
         NotImplementedError()
 
     def clearJacobi(self) -> None:
@@ -86,4 +92,6 @@ class Variable(Node):
         return False
 
     def step(self, lr: float) -> None:
+        if self.jacobi is None:
+            raise ValueError("`jacobi` is None.")
         self.setValue(self.value - lr * self.jacobi.T.reshape(self.shape))

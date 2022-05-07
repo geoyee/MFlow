@@ -1,9 +1,9 @@
 from ..core import NameScope, Variable
 from ..ops import Add, MatMul
-from typing import Dict
+from typing import Tuple
 
 
-def LogisticRegression(input_size: int, classes: int) -> Dict:
+def LogisticRegression(input_size: int, classes: int) -> Tuple:
     """构造多分类逻辑回归模型的计算图
 
     Args:
@@ -11,7 +11,7 @@ def LogisticRegression(input_size: int, classes: int) -> Dict:
         classes (int): 类别数
 
     Returns:
-        Dict:
+        Tuple:
             x (Variable): 输入变量
             logits (Node): 多分类 logits
     """

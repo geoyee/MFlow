@@ -1,11 +1,12 @@
-from typing import Any
+from typing import List, Any, Optional
 
 
 # 计算图类
 class Graph(object):
     def __init__(self) -> None:
-        self.nodes = []
-        self.name_scope = None
+        # Any is Node
+        self.nodes: List[Any] = []
+        self.name_scope: Optional[str] = None
 
     def addNode(self, node: Any) -> None:
         self.nodes.append(node)

@@ -17,10 +17,13 @@ class Metric(Node):
         self.init()
 
     def valueStr(self) -> str:
-        return "{}: {:.4f}".format(self.__class__.__name__, self.value)
+        if self.value is not None:
+            return "{}: {:.4f}".format(self.__class__.__name__, self.value[0, 0])
+        else:
+            return "{}: None".format(self.__class__.__name__)
 
     @staticmethod
-    def prob2Label(prob: np.ndarray, threshold: float = 0.5) -> int:
+    def prob2Label(prob: np.ndarray, threshold: float = 0.5) -> np.matrix:
         if prob.shape[0] > 1:
             # 如果是多分类，预测类别为概率最大的类别
             labels = np.zeros((prob.shape[0], 1))

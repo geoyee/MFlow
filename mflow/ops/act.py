@@ -26,6 +26,8 @@ class Logistic(Operator):
         self.value = np.mat(1.0 / (1.0 + _ePower(ix))).astype("float32")
 
     def calcJacobi(self, parent: Any) -> np.matrix:
+        if self.value is None:
+            raise ValueError("`self.value` is None.")
         return np.diag(np.mat(np.multiply(self.value, 1 - self.value)).A1).astype(
             "float32"
         )

@@ -1,4 +1,5 @@
-from typing import Dict, Union
+import numpy as np
+from typing import Dict, Optional
 from ..core import Graph, Node, getNodeByName, getTrainabledNode
 
 
@@ -10,7 +11,7 @@ class Optimizer(object):
         self.lr = lr
         self.eps = 1e-12
         # Mini Batch中的样本梯度
-        self.acc_grads = dict()
+        self.acc_grads: Dict[Node, np.matrix] = {}
         self.acc_idx = 0
 
     def step(self) -> None:
@@ -29,7 +30,7 @@ class Optimizer(object):
         self,
         node_grids_dict: Dict,
         summarize: bool = False,
-        acc_idx: Union[None, int] = None,
+        acc_idx: Optional[int] = None,
     ) -> None:
         for node, grid in node_grids_dict.items():
             if isinstance(node, Node):
@@ -43,7 +44,7 @@ class Optimizer(object):
                     self.acc_grads[target_node] += grid
                 else:
                     self.acc_grads[target_node] = grid
-        if summarize:
+        if summarize and acc_idx is not None:
             self.acc_idx += acc_idx
         else:
             if acc_idx is None:
@@ -52,7 +53,7 @@ class Optimizer(object):
             else:
                 self.acc_idx = acc_idx
 
-    def update(self, var_grads: Union[None, Dict] = None) -> None:
+    def update(self, var_grads: Optional[Dict] = None) -> None:
         if var_grads is not None:
             self.applyGrads(var_grads)
         # 更新

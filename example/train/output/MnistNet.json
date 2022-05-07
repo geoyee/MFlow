@@ -1,6 +1,6 @@
 {
     "meta": {
-        "save_time": "2022-04-23 14:12:26.338799",
+        "save_time": "2022-05-07 19:17:13.255454",
         "file_name": "MnistNet"
     },
     "service": {},
@@ -1230,7 +1230,11 @@
             "childrens": [],
             "kargs": {
                 "saved": true
-            }
+            },
+            "dim": [
+                1,
+                1
+            ]
         },
         {
             "node_type": "Precision",
@@ -1242,7 +1246,11 @@
             "childrens": [],
             "kargs": {
                 "saved": true
-            }
+            },
+            "dim": [
+                1,
+                1
+            ]
         },
         {
             "node_type": "Recall",
@@ -1254,7 +1262,11 @@
             "childrens": [],
             "kargs": {
                 "saved": true
-            }
+            },
+            "dim": [
+                1,
+                1
+            ]
         }
     ]
 }

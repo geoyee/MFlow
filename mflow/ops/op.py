@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Any
+from typing import Any, Optional
 from .base import Operator
 from ..core import Node
 
@@ -55,6 +55,8 @@ class MatMul(Operator):
             return fillDiag(zeros, self.nparents[1].value.T)
         else:
             jacobi = fillDiag(zeros, self.nparents[0].value)
+            if self.shape is None:
+                raise ValueError("`self.shape` is None.")
             row_sort = np.arange(self.dim).reshape(self.shape[::-1]).T.ravel()
             col_sort = np.arange(parent.dim).reshape(parent.shape[::-1]).T.ravel()
             return jacobi[row_sort, :][:, col_sort].astype("float32")
@@ -96,7 +98,10 @@ class ScalarMultiply(Operator):
 class Reshape(Operator):
     def __init__(self, *parents: Any, **kargs: Any) -> None:
         super(Reshape, self).__init__(*parents, **kargs)
-        self.new_shape = tuple(kargs.get("shape"))
+        new_shape = kargs.get("shape", None)
+        if new_shape is None:
+            raise ValueError("`shape` is None.")
+        self.new_shape = tuple(new_shape)
         assert len(self.new_shape) == 2
 
     def calcValue(self) -> None:
@@ -157,7 +162,7 @@ class Convolve(Operator):
     def __init__(self, *parents: Any, **kargs: Any) -> None:
         super(Convolve, self).__init__(*parents, **kargs)
         assert len(self.nparents) == 2  # 图像与卷积核
-        self.padded = None
+        self.padded: Optional[np.matrix] = None
         self.padding = kargs.get("padding", "valid")
         if self.padding != "valid":
             self.padding = "same"
@@ -204,6 +209,8 @@ class Convolve(Operator):
                 )
 
     def calcJacobi(self, parent: Any) -> np.matrix:
+        if self.padded is None:
+            raise ValueError("`self.padded` is None.")
         kernel = self.nparents[1].value
         jacobi = []
         if parent is self.nparents[0]:  # 图像
@@ -240,9 +247,15 @@ class Convolve(Operator):
 class MaxPooling(Operator):
     def __init__(self, *parents: Any, **kargs: Any) -> None:
         super(MaxPooling, self).__init__(*parents, **kargs)
-        self.stride = tuple(kargs.get("stride"))
+        stride = kargs.get("stride", None)
+        if stride is None:
+            raise ValueError("`stride` is None.")
+        self.stride = tuple(stride)
         assert len(self.stride) == 2
-        self.size = tuple(kargs.get("size"))
+        size = kargs.get("size", None)
+        if size is None:
+            raise ValueError("`size` is None.")
+        self.size = tuple(size)
         assert len(self.size) == 2
         self.flag = None
 
@@ -283,9 +296,15 @@ class MaxPooling(Operator):
 class AvePooling(Operator):
     def __init__(self, *parents: Any, **kargs: Any) -> None:
         super(AvePooling, self).__init__(*parents, **kargs)
-        self.stride = tuple(kargs.get("stride"))
+        stride = kargs.get("stride", None)
+        if stride is None:
+            raise ValueError("`stride` is None.")
+        self.stride = tuple(stride)
         assert len(self.stride) == 2
-        self.size = tuple(kargs.get("size"))
+        size = kargs.get("size", None)
+        if size is None:
+            raise ValueError("`size` is None.")
+        self.size = tuple(size)
         assert len(self.size) == 2
         self.flag = None
 
